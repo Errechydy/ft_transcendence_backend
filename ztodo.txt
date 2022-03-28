@@ -1,0 +1,4 @@
+- npm run prebuild
+- nest g resourse resourseName
+
+
