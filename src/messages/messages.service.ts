@@ -41,45 +41,40 @@ export class MessagesService {
 	}
 
 	async getChatList(myId: number) {
-		// const query = this.messageRepository.createQueryBuilder('messages')    
-		// .select('*')
-		// .jo
-
-		// return this.messageRepository.remove(message);
-
-
-		return getConnection().query(`select *
-        from
-            message
-          join
-            (select user_id, max(timestamp) m
-                from
-                   (
-                     (select id, to_id user_id, timestamp
-                       from message
-                       where from_id = ${myId} )
-                   union
-                     (select id, from_id user_id, timestamp
-                       from message
-                       where to_id = ${myId})
-                    ) t1
-               group by user_id) t2
-         on ((from_id = ${myId} and to_id = user_id) or
-             (from_id = user_id and to_id = ${myId} )) and
-             (timestamp = m)
-       	order by timestamp desc`);
-
-
-
-
-		//    return await this.messageRepository.createQueryBuilder('t')
-		//    .select(['t.id', 't.from_id'])
-		//    .leftJoin('t.categories', 'c')
-		//    .where('c.id = :cID', { cID: categoryID})
-		//    .andWhere('t.name like :q', { q: `%${q}%` })
-		//    .getMany();
-
-
-
+		return getConnection().query(`
+			select * FROM
+				public."message"
+					INNER JOIN
+						public."user"
+					ON
+						public."message".from_id = public."user".id and public."message".from_id = ${myId}
+						or 
+						public."message".to_id = public."user".id and public."message".to_id = ${myId}
+					INNER JOIN 
+						(
+							select user_id, max(timestamp) m from
+							(
+								select id, to_id user_id, timestamp from
+										public."message"
+									where from_id = ${myId}
+								
+								union
+								
+									select id, from_id user_id, timestamp from
+										public."message"
+									where
+										to_id = ${myId}
+							) t1
+							group by user_id
+						) t2
+						on
+							(
+								from_id = ${myId} and to_id = user_id or from_id = user_id and to_id = ${myId}
+							) 
+							and
+								timestamp = m
+						order by
+							timestamp desc
+				`);
 	}
 }
