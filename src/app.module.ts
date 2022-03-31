@@ -7,6 +7,9 @@ import { ServeStaticModule} from '@nestjs/serve-static'; // static
 import { join } from 'path'; // static
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
+import { RoomModule } from './room/room.module';
+import { BanModule } from './ban/ban.module';
+import { BlockModule } from './block/block.module';
 
 @Module({
 	imports: [
@@ -18,6 +21,9 @@ import { MessagesModule } from './messages/messages.module';
 		
 		UsersModule,
 		MessagesModule,
+		RoomModule,
+		BanModule,
+		BlockModule,
 	
 
 	],

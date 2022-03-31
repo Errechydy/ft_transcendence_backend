@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -20,13 +20,6 @@ export class UsersService {
 
 	findAll() {
 		return this.usersRepository.find();
-
-
-
-// return getConnection().query(`SELECT * FROM public."user"`);
-
-
-
 	}
 
 	findOne(id: number): Promise<User> {
@@ -44,7 +37,7 @@ export class UsersService {
 
 	async remove(id: number): Promise<User> {
 		const user = await this.findOne(id);
-
-		return this.usersRepository.remove(user);
+		if(user)
+			return this.usersRepository.remove(user);
 	}
 }

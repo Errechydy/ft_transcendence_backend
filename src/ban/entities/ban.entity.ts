@@ -1,23 +1,23 @@
 
-
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Message {
+export class Ban {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
-	from_id: number;
+	@Column('boolean', {default: false})
+	banned: boolean;
 
 	@Column()
-	to_id: number;
+	user_id: number;
 
 	@Column()
-	msg: string;
+	room_id: number;
 
  	@Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-	timestamp: Date;
+	started_at: Date;
 
-
+	@Column('int',  {default: '0'})
+	duration: number;
 }

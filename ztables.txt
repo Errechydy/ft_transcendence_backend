@@ -1,0 +1,36 @@
+
+
+======================= Message ======================
+- id 
+- from_id (number)
+- to_id (number)
+- msg (string)
+- timestamp (timestamp)
+===================================================
+======================= Room message ======================
+- id 
+- room_id (number)
+- from_id (number)
+- msg (string)
+- timestamp (timestamp)
+===================================================
+======================= Ban ======================
+- id 
+- banned (boolean : false)
+- user_id (number)
+- room_id (number)
+- started_at (timestamp)
+- duration (number)
+===================================================
+======================= Room ======================
+- id 
+- name  (string)
+- password (string)
+- super_admin_id (number)
+- admins (number[])
+===================================================
+======================= Block user ======================
+- id 
+- user_id  (number)
+- blocked (number[])
+===================================================

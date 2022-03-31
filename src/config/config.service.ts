@@ -1,6 +1,10 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path'; // static
+import { Ban } from 'src/ban/entities/ban.entity';
+import { Block } from 'src/block/entities/block.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { RoomMessage } from 'src/room/entities/room-message.entity';
+import { Room } from 'src/room/entities/room.entity';
 import { User } from 'src/users/entities/user.entity';
 
 require('dotenv').config();
@@ -38,7 +42,7 @@ class ConfigService {
 			password: this.getValue('POSTGRES_PASSWORD'),
 			database: this.getValue('POSTGRES_DATABASE'),
 
-			entities: [User, Message],
+			entities: [User, Message, Ban, Room, Block, RoomMessage],
 
 			migrationsTableName: 'migration',
 

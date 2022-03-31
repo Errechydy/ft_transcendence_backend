@@ -1,0 +1,23 @@
+
+1 - get userId from jwt or session
+2- hash room passwords before saving them to the database
+
+---------------
+
+- npm run prebuild
+- nest g resource resourceName(example: users)
+
+
+---------
+@Column("int", { array: true })
+kid_ages: number[];
+-------------------------------------
+kid = getRepository('kid')
+        .createQueryBuilder()
+        .where(':kid_age = ANY (kid.kid_ages)', { kid_age: 5 });
+---------
+--------------- Date to seconds ---
+Math.round(new Date().getTime()/1000)
+---------------- current date to seconds -----------
+Math.floor(Date.now() / 1000)
+-------------------------------
