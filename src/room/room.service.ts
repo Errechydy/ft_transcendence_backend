@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { CreateRoomMessageDto } from './dto/create-room-message.dto';
@@ -26,11 +26,10 @@ export class RoomService {
 	}
 
 	// Get room messages list
-	findRoomMessages(roomId: number) {
-		// return this.roomsMessagesRepository.find({
-		// 	room_id: roomId,
-		// });
-		return getConnection().query(`
+	async findRoomMessages(roomId: number) {
+		if( isNaN(roomId) )
+			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+		const data = await getConnection().query(`
 			SELECT *  FROM
 				public."room_message"
 				JOIN
@@ -39,6 +38,9 @@ export class RoomService {
 						public."user".id = public."room_message".from_id
 				WHERE public."room_message".room_id = ${roomId}
 		`);
+		if (!data)
+			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+		return data;
 	}
 
 	// Save room message
@@ -51,8 +53,11 @@ export class RoomService {
 		return this.roomsRepository.find();
 	}
 
-	findOne(id: number) {
-		return this.roomsRepository.findOne(id);
+	async findOne(id: number) {
+		const data = await this.roomsRepository.findOne(id);
+		if (!data)
+			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+		return data;
 	}
 
 	async update(id: number, updateRoomDto: UpdateRoomDto) {
