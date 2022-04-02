@@ -13,6 +13,9 @@ export class Room {
 	password: string;
 
 	@Column()
+	locked: boolean;
+
+	@Column()
 	owner_id: number;
 
 	@Column("int", { array: true })

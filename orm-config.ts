@@ -1,5 +1,4 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { join } from 'path'; // static
 import { Ban } from 'src/ban/entities/ban.entity';
 import { Block } from 'src/block/entities/block.entity';
 import { Message } from 'src/messages/entities/message.entity';

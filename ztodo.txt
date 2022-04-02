@@ -1,6 +1,9 @@
+0 - TypeORM validation 
+
 1 - return status : true | false, on all routes
 		if (!data)
 			throw new HttpException({ error: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+
 2 - socketio
 3 - auth (jwt)
 

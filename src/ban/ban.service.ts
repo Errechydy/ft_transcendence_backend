@@ -13,9 +13,14 @@ export class BanService {
 		private bansRepository: Repository<Ban>,
 	) {}
 
-	create(createBanDto: CreateBanDto) {
-		const newBannedUser = this.bansRepository.create(createBanDto);
-		return this.bansRepository.save(newBannedUser);
+	async create(createBanDto: CreateBanDto) {
+		const newBannedUser = this.bansRepository.create(createBanDto); // or create({ ....my data });
+		
+		const data = await this.bansRepository.save(newBannedUser); // insert Or update if it already exists
+		console.log(data);
+
+		return data;
+		
 	}
 
 	findAll() {
