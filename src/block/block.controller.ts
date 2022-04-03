@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { BlockService } from './block.service';
 import { CreateBlockDto } from './dto/create-block.dto';
 
@@ -8,9 +8,8 @@ export class BlockController {
 
 	@Post()
 	blockUser(@Body() createBlockDto: CreateBlockDto) {
-		const myId = 1; // TODO: get it from jwt
-		if(createBlockDto.user_id == myId)
-			return this.blockService.blockUser(createBlockDto);
+		const sessionId = 1; // TODO: get it from jwt
+		return this.blockService.blockUser(sessionId, createBlockDto);
 	}
 
 	@Get('users')
@@ -21,14 +20,13 @@ export class BlockController {
 
 	@Delete()
 	unBlockUser(@Body() createBlockDto: CreateBlockDto) {
-		const myId = 1; // TODO: get it from jwt
-		if(createBlockDto.user_id == myId)
-			return this.blockService.unBlockUser(createBlockDto);
+		const sessionId = 1; // TODO: get it from jwt
+		return this.blockService.unBlockUser(sessionId, createBlockDto);
 	}
 
 	@Get(':id')
-	isBlocked(@Param('id') id: string) {
-		const myId = 1; // TODO: get it from jwt
-		return this.blockService.isBlocked(myId, +id);
+	isBlocked(@Param('id', ParseIntPipe) id: string) {
+		const sessionId = 1; // TODO: get it from jwt
+		return this.blockService.isBlocked(sessionId, +id);
 	}
 }

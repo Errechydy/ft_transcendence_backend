@@ -27,8 +27,8 @@ export class BlockService {
 		});
 	}
 
-	async blockUser(createBlockDto: CreateBlockDto) {
-		const userData = await this.findUser(createBlockDto.user_id);
+	async blockUser(sessionId: number, createBlockDto: CreateBlockDto) {
+		const userData = await this.findUser(sessionId);
 		if( userData )
 		{
 			if( !userData.blocked.includes(createBlockDto.blocked) )
@@ -40,21 +40,21 @@ export class BlockService {
 		{
 
 			let newUserData = this.blocksRepository.create();
-			newUserData.user_id = createBlockDto.user_id;
+			newUserData.user_id = sessionId;
 			newUserData.blocked = [createBlockDto.blocked];
 			return this.blocksRepository.save(newUserData);
 		}
 	}
 
-	async unBlockUser(createBlockDto: CreateBlockDto) {
-		const userData = await this.findUser(createBlockDto.user_id);
+	async unBlockUser(sessionId: number, createBlockDto: CreateBlockDto) {
+		const userData = await this.findUser(sessionId);
 		if( userData )
 			userData.blocked = this.arrayRemove(userData.blocked, createBlockDto.blocked);
 	
 		return this.blocksRepository.save(userData);
 	}
 
-	blockedList(myId: number) {
+	blockedList(sessionId: number) {
 
 		return getConnection().query(`
 			SELECT public."user".*  FROM
@@ -63,14 +63,14 @@ export class BlockService {
 						public."user"
 					ON
 						public."user".id = ANY(public."block".blocked)
-				WHERE public."block".user_id = ${myId}
+				WHERE public."block".user_id = ${sessionId}
 		`);
 	}
 
 	
 
-	async isBlocked(myId: number, userId: number): Promise<boolean> {
-		const userData = await this.findUser(myId);
+	async isBlocked(sessionId: number, userId: number): Promise<boolean> {
+		const userData = await this.findUser(sessionId);
 		if( userData && userData.blocked.includes(userId) )
 			return true;
 		else

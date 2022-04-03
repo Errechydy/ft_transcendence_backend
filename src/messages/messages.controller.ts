@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -13,25 +13,29 @@ export class MessagesController {
 	*/
 	@Post()
 	create(@Body() createMessageDto: CreateMessageDto) {
-		return this.messagesService.create(createMessageDto);
+		const sessionId : number = 1;
+		return this.messagesService.create(sessionId, createMessageDto);
 	}
 
 	// Display Users list with thier last msg
 	@Get()
 	findAll() {
-		return this.messagesService.getChatList();
+		const sessionId : number = 1;
+		return this.messagesService.getChatList(sessionId);
 		// return this.messagesService.findAll();
 	}
 
 	// Get my messages with user (:id)
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.messagesService.findOne(+id);
+	findOne(@Param('id', ParseIntPipe) id: string) {
+		const sessionId : number = 1;
+		return this.messagesService.findOne(sessionId, +id);
 	}
 
 	// Delete all messages that i've had with this user
 	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.messagesService.remove(+id);
+	remove(@Param('id', ParseIntPipe) id: string) {
+		const sessionId : number = 1;
+		return this.messagesService.remove(sessionId, +id);
 	}
 }

@@ -25,3 +25,9 @@ CREATE ROLE chris WITH LOGIN PASSWORD 'password';
 ALTER ROLE chris CREATEDB;
 
 ------------------------------
+
+
+psql ft_transcendence ===> connect to database
+\dt ==> list of tables
+drop table ban; ===> drop table
+\q ===> quit

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { BanService } from './ban.service';
 import { CreateBanDto } from './dto/create-ban.dto';
 import { UpdateBanDto } from './dto/update-ban.dto';
@@ -23,12 +23,12 @@ export class BanController {
 	}
 
 	@Get('room/:roomId/user/:userId')
-	findUserInRoom(@Param('roomId') roomId: string, @Param('userId') userId: string) {
+	findUserInRoom(@Param('roomId', ParseIntPipe) roomId: string, @Param('userId', ParseIntPipe) userId: string) {
 		return this.banService.findUserInRoom(+roomId, +userId);
 	}
 
 	@Delete('room/:roomId/user/:userId')
-	unbanUserFromRoom(@Param('roomId') roomId: string, @Param('userId') userId: string) {
+	unbanUserFromRoom(@Param('roomId', ParseIntPipe) roomId: string, @Param('userId', ParseIntPipe) userId: string) {
 		return this.banService.unbanUserFromRoom(+roomId, +userId);
 	}
 

@@ -1,5 +1,6 @@
 
 
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -16,8 +17,8 @@ export class Message {
 	@Column()
 	msg: string;
 
- 	@Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-	timestamp: Date;
+ 	@Column('bigint')
+	created: number;
 
 
 }

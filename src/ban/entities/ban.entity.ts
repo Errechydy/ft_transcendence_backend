@@ -15,9 +15,10 @@ export class Ban {
 	@Column()
 	room_id: number;
 
- 	@Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-	started_at: Date;
+ 	@Column('bigint')
+	created: number;
 
 	@Column('int',  {default: '0'})
 	duration: number;
+
 }

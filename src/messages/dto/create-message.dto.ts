@@ -1,5 +1,14 @@
+import { IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+
 export class CreateMessageDto {
-	from_id: number;
+
+	@IsNotEmpty()
+	@IsInt()
 	to_id: number;
+
+	@IsNotEmpty()
+	@IsString()
 	msg: string;
+
+	created: number = Date.now();
 }

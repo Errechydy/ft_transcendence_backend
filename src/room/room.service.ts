@@ -20,8 +20,9 @@ export class RoomService {
 	) {}
 
 
-	create(createRoomDto: CreateRoomDto) {
+	create(sessionId: number, createRoomDto: CreateRoomDto) {
 		const newRoom = this.roomsRepository.create(createRoomDto);
+		newRoom.owner_id = sessionId;
 		return this.roomsRepository.save(newRoom);
 	}
 
@@ -44,8 +45,9 @@ export class RoomService {
 	}
 
 	// Save room message
-	saveMessageToRoom(createRoomMessageDto: CreateRoomMessageDto) {
+	saveMessageToRoom(sessionId: number, createRoomMessageDto: CreateRoomMessageDto) {
 		const newRoom = this.roomsMessagesRepository.create(createRoomMessageDto);
+		newRoom.from_id = sessionId;
 		return this.roomsMessagesRepository.save(newRoom);
 	}
 

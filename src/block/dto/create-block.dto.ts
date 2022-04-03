@@ -1,4 +1,7 @@
+import { IsInt, IsNotEmpty, IsNumber } from 'class-validator';
+
 export class CreateBlockDto {
-	user_id: number;
+
+	@IsNumber()
 	blocked: number;
 }

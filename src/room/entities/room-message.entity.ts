@@ -7,6 +7,7 @@ export class RoomMessage {
 	id: number;
 
 	@Column()
+	
 	room_id: number;
 
 	@Column()
@@ -15,8 +16,8 @@ export class RoomMessage {
 	@Column()
 	msg: string;
 
-	@Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-	timestamp: Date;
+	@Column('bigint')
+	created: number;
 
 
 }

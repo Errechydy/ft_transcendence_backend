@@ -13,85 +13,22 @@ export class MessagesService {
 		private messageRepository: Repository<Message>,
 	) {}
 		
-	create(createMessageDto: CreateMessageDto) {
-		// TODO: get myId from jwt token
-		createMessageDto.from_id = 1;
+	create(sessionId: number, createMessageDto: CreateMessageDto) {
 		const newMessage = this.messageRepository.create(createMessageDto);
+		newMessage.from_id = sessionId;
 		return this.messageRepository.save(newMessage);
 	}
 
 
-	findOne(id: number) {
-		// TODO: get myId from jwt token
-		const myId:number = 1;
+	findOne(sessionId: number, userId: number) {
 
 		return this.messageRepository.createQueryBuilder('message')
-			.where(new Brackets(qb => {
-				qb.where('from_id = :id', {
-					id: id,
-				});
-				qb.andWhere('to_id = :id2', {
-					id2: myId,
-				});                               
-			}))
-			.orWhere(new Brackets(qb => {
-				qb.where('to_id = :id3', {
-					id3: id,
-				});
-				qb.andWhere('from_id = :id4', {
-					id4: myId,
-				});                               
-			}))
-			.getMany();
-		
-	}
-
-	async getChatList() {
-		// TODO: get myId from jwt token
-		const myId:number = 1;
-
-		return getConnection().query(`
-			SELECT * FROM
-				public."message"
-					INNER JOIN
-							public."user"
-						ON
-							( public."message".from_id = public."user".id AND public."message".from_id != ${myId} )
-							OR 
-							( public."message".to_id = public."user".id AND public."message".to_id != ${myId} )
-					INNER JOIN 
-							(
-								SELECT user_id, max(timestamp) m FROM
-								(
-									SELECT id, to_id user_id, timestamp FROM
-											public."message"
-										WHERE from_id = ${myId}
-									UNION
-										SELECT id, from_id user_id, timestamp FROM
-											public."message"
-										WHERE
-											to_id = ${myId}
-								) t1
-								GROUP BY user_id
-							) t2
-						ON
-							( from_id = ${myId} AND to_id = user_id OR from_id = user_id AND to_id = ${myId} )  AND timestamp = m
-						ORDER BY
-							timestamp DESC
-				`);
-	}
-
-	async remove(userId: number) {
-		// TODO: get myId from jwt token
-		const myId:number = 1;
-
-		return this.messageRepository.createQueryBuilder('message').delete()
 			.where(new Brackets(qb => {
 				qb.where('from_id = :id', {
 					id: userId,
 				});
 				qb.andWhere('to_id = :id2', {
-					id2: myId,
+					id2: sessionId,
 				});                               
 			}))
 			.orWhere(new Brackets(qb => {
@@ -99,7 +36,63 @@ export class MessagesService {
 					id3: userId,
 				});
 				qb.andWhere('from_id = :id4', {
-					id4: myId,
+					id4: sessionId,
+				});                               
+			}))
+			.getMany();
+		
+	}
+
+	async getChatList(sessionId: number) {
+
+		return getConnection().query(`
+			SELECT * FROM
+				public."message"
+					INNER JOIN
+							public."user"
+						ON
+							( public."message".from_id = public."user".id AND public."message".from_id != ${sessionId} )
+							OR 
+							( public."message".to_id = public."user".id AND public."message".to_id != ${sessionId} )
+					INNER JOIN 
+							(
+								SELECT user_id, max(timestamp) m FROM
+								(
+									SELECT id, to_id user_id, timestamp FROM
+											public."message"
+										WHERE from_id = ${sessionId}
+									UNION
+										SELECT id, from_id user_id, timestamp FROM
+											public."message"
+										WHERE
+											to_id = ${sessionId}
+								) t1
+								GROUP BY user_id
+							) t2
+						ON
+							( from_id = ${sessionId} AND to_id = user_id OR from_id = user_id AND to_id = ${sessionId} )  AND timestamp = m
+						ORDER BY
+							timestamp DESC
+				`);
+	}
+
+	async remove(sessionId: number, userId: number) {
+
+		return this.messageRepository.createQueryBuilder('message').delete()
+			.where(new Brackets(qb => {
+				qb.where('from_id = :id', {
+					id: userId,
+				});
+				qb.andWhere('to_id = :id2', {
+					id2: sessionId,
+				});                               
+			}))
+			.orWhere(new Brackets(qb => {
+				qb.where('to_id = :id3', {
+					id3: userId,
+				});
+				qb.andWhere('from_id = :id4', {
+					id4: sessionId,
 				});                               
 			}))
 			.execute();
