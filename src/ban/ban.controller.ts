@@ -1,15 +1,24 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe } from '@nestjs/common';
+import { RoomService } from 'src/room/room.service';
 import { BanService } from './ban.service';
 import { CreateBanDto } from './dto/create-ban.dto';
 import { UpdateBanDto } from './dto/update-ban.dto';
 
 @Controller('ban')
 export class BanController {
-	constructor(private readonly banService: BanService) {}
+	constructor(
+		private readonly banService: BanService,
+		private readonly roomService: RoomService
+	) {}
 
 	@Post()
-	create(@Body() createBanDto: CreateBanDto) {
-		return this.banService.create(createBanDto);
+	async create(@Body() createBanDto: CreateBanDto) {
+		const sessionId: number = 1;
+
+		const roomData = await this.roomService.findOne(createBanDto.room_id);
+
+
+		return this.banService.create(sessionId, roomData, createBanDto);
 	}
 
 	@Get()
@@ -18,8 +27,12 @@ export class BanController {
 	}
 
 	@Patch()
-	update(@Body() updateBanDto: UpdateBanDto) {
-		return this.banService.update(updateBanDto);
+	async update(@Body() updateBanDto: UpdateBanDto) {
+		const sessionId: number = 1;
+
+		const roomData = await this.roomService.findOne(updateBanDto.room_id);
+
+		return this.banService.update(sessionId, roomData, updateBanDto);
 	}
 
 	@Get('room/:roomId/user/:userId')
@@ -28,8 +41,12 @@ export class BanController {
 	}
 
 	@Delete('room/:roomId/user/:userId')
-	unbanUserFromRoom(@Param('roomId', ParseIntPipe) roomId: string, @Param('userId', ParseIntPipe) userId: string) {
-		return this.banService.unbanUserFromRoom(+roomId, +userId);
+	async unbanUserFromRoom(@Param('roomId', ParseIntPipe) roomId: string, @Param('userId', ParseIntPipe) userId: string) {
+		const sessionId: number = 1;
+
+		const roomData = await this.roomService.findOne(+roomId);
+
+		return this.banService.unbanUserFromRoom(sessionId, roomData, +roomId, +userId);
 	}
 
 }

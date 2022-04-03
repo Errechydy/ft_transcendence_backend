@@ -8,25 +8,25 @@ export class BlockController {
 
 	@Post()
 	blockUser(@Body() createBlockDto: CreateBlockDto) {
-		const sessionId = 1; // TODO: get it from jwt
+		const sessionId: number = 1; // TODO: get it from jwt
 		return this.blockService.blockUser(sessionId, createBlockDto);
 	}
 
 	@Get('users')
 	blockedList() {
-		const myId = 1; // TODO: get it from jwt
-		return this.blockService.blockedList(myId); // Return list of all blocked users
+		const sessionId: number = 1; // TODO: get it from jwt
+		return this.blockService.blockedList(sessionId); // Return list of all blocked users
 	}
 
 	@Delete()
 	unBlockUser(@Body() createBlockDto: CreateBlockDto) {
-		const sessionId = 1; // TODO: get it from jwt
+		const sessionId: number = 1; // TODO: get it from jwt
 		return this.blockService.unBlockUser(sessionId, createBlockDto);
 	}
 
 	@Get(':id')
 	isBlocked(@Param('id', ParseIntPipe) id: string) {
-		const sessionId = 1; // TODO: get it from jwt
+		const sessionId: number = 1; // TODO: get it from jwt
 		return this.blockService.isBlocked(sessionId, +id);
 	}
 }

@@ -27,9 +27,7 @@ export class RoomService {
 	}
 
 	// Get room messages list
-	async findRoomMessages(roomId: number) {
-		if( isNaN(roomId) )
-			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+	async findRoomMessages(sessionId: number, myBlockedList: number[], roomId: number) {
 		const data = await getConnection().query(`
 			SELECT *  FROM
 				public."room_message"
@@ -37,7 +35,9 @@ export class RoomService {
 						public."user"
 					ON
 						public."user".id = public."room_message".from_id
-				WHERE public."room_message".room_id = ${roomId}
+				WHERE public."room_message".room_id = ${roomId} 
+				AND public."room_message".from_id = ${roomId}
+				AND public."room_message".from_id NOT IN ({implode(',',${myBlockedList}});
 		`);
 		if (!data)
 			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
@@ -62,8 +62,12 @@ export class RoomService {
 		return data;
 	}
 
-	async update(id: number, updateRoomDto: UpdateRoomDto) {
+	async update(sessionId: number ,id: number, updateRoomDto: UpdateRoomDto) {
 		const room = await this.findOne(id);
+
+		if(sessionId == room.owner_id)
+			throw new HttpException({ message: 'You can\'t edit this room!' }, HttpStatus.UNAUTHORIZED);
+
 
 		room.name = updateRoomDto.name;
 		room.password = updateRoomDto.password;
@@ -72,8 +76,11 @@ export class RoomService {
 		return this.roomsRepository.save(room);
 	}
 
-	async remove(id: number) {
+	async remove(sessionId: number, id: number) {
 		const room = await this.findOne(id);
+		if(sessionId == room.owner_id)
+			throw new HttpException({ message: 'You can\'t edit this room!' }, HttpStatus.UNAUTHORIZED);
+
 		if(room)
 			return this.roomsRepository.remove(room);
 	}

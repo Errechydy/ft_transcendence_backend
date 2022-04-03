@@ -2,10 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from 
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
+import { BlockService } from 'src/block/block.service';
 
 @Controller('messages')
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(
+	  private readonly messagesService: MessagesService,
+	  private readonly blockService: BlockService
+	 ) {}
 
 	/*
 	// Save message
@@ -19,17 +23,20 @@ export class MessagesController {
 
 	// Display Users list with thier last msg
 	@Get()
-	findAll() {
+	async findAll() {
 		const sessionId : number = 1;
-		return this.messagesService.getChatList(sessionId);
+		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
+		return this.messagesService.getChatList(sessionId, myBlockedList);
 		// return this.messagesService.findAll();
 	}
 
 	// Get my messages with user (:id)
 	@Get(':id')
-	findOne(@Param('id', ParseIntPipe) id: string) {
+	async findOne(@Param('id', ParseIntPipe) id: string) {
 		const sessionId : number = 1;
-		return this.messagesService.findOne(sessionId, +id);
+
+		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
+		return this.messagesService.findOne(sessionId, myBlockedList, +id);
 	}
 
 	// Delete all messages that i've had with this user

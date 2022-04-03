@@ -7,6 +7,7 @@ import { Block } from './entities/block.entity';
 @Module({
 	imports: [TypeOrmModule.forFeature([Block])],
 	controllers: [BlockController],
-  	providers: [BlockService]
+  	providers: [BlockService],
+	  exports: [BlockService]
 })
 export class BlockModule {}

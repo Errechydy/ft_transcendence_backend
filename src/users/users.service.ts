@@ -24,8 +24,8 @@ export class UsersService {
 
 	async findOne(id: number) {
 		const data = await  this.usersRepository.findOne(id);
-		// if (!data)
-		// 	throw new HttpException({ message: 'User Not Found' }, HttpStatus.NOT_FOUND);
+		if (!data)
+			throw new HttpException({ message: 'User Not Found' }, HttpStatus.NOT_FOUND);
 		return data;
 	}
 

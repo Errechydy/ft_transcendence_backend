@@ -1,9 +1,8 @@
-0 - TypeORM validation 
 
-1 - return status : true | false, on all routes
-		if (!data)
-			throw new HttpException({ error: 'Room Not Found' }, HttpStatus.NOT_FOUND);
+0 - Test if i will get messages from blocked users private
+0 - Test if i will get messages from blocked users in rooms 
 
+1 - leave a room (button) 
 2 - socketio
 3 - auth (jwt)
 
@@ -12,4 +11,9 @@
 
 
 - If the user is blocked then don't show it's messages in both private messages + rooms
-- If the user blocked another user, the messages from the blocked person must be hidden
+	- get direct messages : check if the user is blocked : if yes then return an empty array
+	- get room messages :
+						if the user is banned or muted from the Roo ===> then filter his missages (remove them from the results)
+						if "I" blocked the user then filter his messages (remove them from the results)
+
+

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BlockService } from 'src/block/block.service';
 import { Brackets, getConnection, Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -11,6 +12,8 @@ export class MessagesService {
 	constructor(
 		@InjectRepository(Message)
 		private messageRepository: Repository<Message>,
+
+		
 	) {}
 		
 	create(sessionId: number, createMessageDto: CreateMessageDto) {
@@ -20,7 +23,11 @@ export class MessagesService {
 	}
 
 
-	findOne(sessionId: number, userId: number) {
+	async findOne(sessionId: number, myBlockedList: number[], userId: number) {
+
+
+		if(myBlockedList.includes(userId))
+			return [];
 
 		return this.messageRepository.createQueryBuilder('message')
 			.where(new Brackets(qb => {
@@ -40,10 +47,9 @@ export class MessagesService {
 				});                               
 			}))
 			.getMany();
-		
 	}
 
-	async getChatList(sessionId: number) {
+	async getChatList(sessionId: number, myBlockedList: number[]) {
 
 		return getConnection().query(`
 			SELECT * FROM
@@ -71,6 +77,7 @@ export class MessagesService {
 							) t2
 						ON
 							( from_id = ${sessionId} AND to_id = user_id OR from_id = user_id AND to_id = ${sessionId} )  AND timestamp = m
+						WHERE public."user".id NOT IN ({implode(',',${myBlockedList}});
 						ORDER BY
 							timestamp DESC
 				`);

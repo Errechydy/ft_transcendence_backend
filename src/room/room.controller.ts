@@ -3,11 +3,16 @@ import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { CreateRoomMessageDto } from './dto/create-room-message.dto';
+import { BlockService } from 'src/block/block.service';
 
 @Controller('room')
 export class RoomController {
 
-  	constructor(private readonly roomService: RoomService) {}
+  	constructor(
+		private readonly roomService: RoomService,
+		private readonly blockService: BlockService
+
+	) {}
 
 	@Post()
 	create(@Body() createRoomDto: CreateRoomDto) {
@@ -27,18 +32,24 @@ export class RoomController {
 
 	@Patch(':id')
 	update(@Param('id', ParseIntPipe) id: string, @Body() updateRoomDto: UpdateRoomDto) {
-		return this.roomService.update(+id, updateRoomDto);
+		const sessionId: number = 1;
+		return this.roomService.update(sessionId, +id, updateRoomDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id', ParseIntPipe) id: string) {
-		return this.roomService.remove(+id);
+		const sessionId: number = 1;
+		return this.roomService.remove(sessionId, +id);
 	}
 
 	// Get room messages
 	@Get(':roomId/messages')
-	findRoomMessages(@Param('roomId', ParseIntPipe) roomId: string) {
-		return this.roomService.findRoomMessages(+roomId);
+	async findRoomMessages(@Param('roomId', ParseIntPipe) roomId: string) {
+		const sessionId: number = 1;
+
+		// my blocked list
+		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
+		return this.roomService.findRoomMessages(sessionId, myBlockedList, +roomId);
 	}
 
 	// Save msg to room

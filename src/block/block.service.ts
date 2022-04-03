@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { CreateBlockDto } from './dto/create-block.dto';
@@ -15,16 +15,18 @@ export class BlockService {
 
 
 	arrayRemove(users: number[], userId: number) { 
-    
         return users.filter(function(ele){ 
             return ele != userId; 
         });
     }
 
-	findUser(userId: number) {
-		return this.blocksRepository.findOne({
+	async findUser(userId: number) {
+		const data = await this.blocksRepository.findOne({
 			user_id: userId,
 		});
+		if (!data)
+			throw new HttpException({ error: 'User Not Found' }, HttpStatus.NOT_FOUND);
+		return data;
 	}
 
 	async blockUser(sessionId: number, createBlockDto: CreateBlockDto) {
@@ -69,11 +71,11 @@ export class BlockService {
 
 	
 
-	async isBlocked(sessionId: number, userId: number): Promise<boolean> {
+	async isBlocked(sessionId: number, userId: number) {
 		const userData = await this.findUser(sessionId);
 		if( userData && userData.blocked.includes(userId) )
-			return true;
+			return {'blocked': true};
 		else
-			return false;
+			return {'blocked': false};
 	}
 }
