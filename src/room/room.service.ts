@@ -27,12 +27,12 @@ export class RoomService {
 	}
 
 	// Get room messages list
-	async findRoomMessages(sessionId: number, myBlockedList: number[], roomId: number) {
+	async findRoomMessages(sessionId: number, excludeUsersList: number[], roomId: number) {
 
 		let whereBlock: string;
 
-		if( myBlockedList.length > 0 )
-			whereBlock = `AND public."user".id NOT IN ( ${myBlockedList.join(",")} )`;
+		if( excludeUsersList.length > 0 )
+			whereBlock = `AND public."user".id NOT IN ( ${excludeUsersList.join(",")} )`;
 		else
 			whereBlock = ``;
 

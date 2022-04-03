@@ -49,7 +49,13 @@ export class RoomController {
 
 		// my blocked list
 		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
-		return this.roomService.findRoomMessages(sessionId, myBlockedList, +roomId);
+
+		// TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
+		const roomBannedList: number[] = [];
+
+		const excludeUsersList = myBlockedList.concat(roomBannedList);
+
+		return this.roomService.findRoomMessages(sessionId, excludeUsersList, +roomId);
 	}
 
 	// Save msg to room

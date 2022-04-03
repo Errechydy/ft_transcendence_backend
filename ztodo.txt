@@ -1,6 +1,7 @@
 
-0 - Test if i will get messages from blocked users private
-0 - Test if i will get messages from blocked users in rooms 
+0 - // TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
+
+- access private room ( with password, save in user session )
 
 1 - leave a room (button) 
 2 - socketio
