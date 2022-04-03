@@ -51,6 +51,13 @@ export class MessagesService {
 
 	async getChatList(sessionId: number, myBlockedList: number[]) {
 
+		let whereBlock: string;
+
+		if( myBlockedList.length > 0 )
+			whereBlock = `WHERE public."user".id NOT IN ( ${myBlockedList.join(",")} )`;
+		else
+			whereBlock = ``;
+
 		return getConnection().query(`
 			SELECT * FROM
 				public."message"
@@ -62,13 +69,13 @@ export class MessagesService {
 							( public."message".to_id = public."user".id AND public."message".to_id != ${sessionId} )
 					INNER JOIN 
 							(
-								SELECT user_id, max(timestamp) m FROM
+								SELECT user_id, max(created) m FROM
 								(
-									SELECT id, to_id user_id, timestamp FROM
+									SELECT id, to_id user_id, created FROM
 											public."message"
 										WHERE from_id = ${sessionId}
 									UNION
-										SELECT id, from_id user_id, timestamp FROM
+										SELECT id, from_id user_id, created FROM
 											public."message"
 										WHERE
 											to_id = ${sessionId}
@@ -76,10 +83,10 @@ export class MessagesService {
 								GROUP BY user_id
 							) t2
 						ON
-							( from_id = ${sessionId} AND to_id = user_id OR from_id = user_id AND to_id = ${sessionId} )  AND timestamp = m
-						WHERE public."user".id NOT IN ({implode(',',${myBlockedList}});
+							( from_id = ${sessionId} AND to_id = user_id OR from_id = user_id AND to_id = ${sessionId} )  AND created = m
+						${whereBlock}
 						ORDER BY
-							timestamp DESC
+							created DESC
 				`);
 	}
 

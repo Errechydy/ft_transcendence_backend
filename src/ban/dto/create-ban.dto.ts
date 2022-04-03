@@ -22,6 +22,7 @@ export class CreateBanDto {
 	@IsInt()
 	duration: number;
 
+	@IsNumber()
 	created: number = Date.now();
 
 }

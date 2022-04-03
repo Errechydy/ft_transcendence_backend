@@ -20,13 +20,10 @@ export class BlockService {
         });
     }
 
-	async findUser(userId: number) {
-		const data = await this.blocksRepository.findOne({
+	findUser(userId: number) {
+		return this.blocksRepository.findOne({
 			user_id: userId,
 		});
-		if (!data)
-			throw new HttpException({ error: 'User Not Found' }, HttpStatus.NOT_FOUND);
-		return data;
 	}
 
 	async blockUser(sessionId: number, createBlockDto: CreateBlockDto) {
@@ -56,7 +53,22 @@ export class BlockService {
 		return this.blocksRepository.save(userData);
 	}
 
-	blockedList(sessionId: number) {
+	async blockedList(sessionId: number) {
+
+		const data = await getConnection().query(`
+			SELECT public."user".*  FROM
+				public."block"
+				JOIN
+						public."user"
+					ON
+						public."user".id = ANY(public."block".blocked)
+				WHERE public."block".user_id = ${sessionId}
+		`);
+
+		return data.map(a => a.id);
+	}
+
+	blockedListUsers(sessionId: number) {
 
 		return getConnection().query(`
 			SELECT public."user".*  FROM

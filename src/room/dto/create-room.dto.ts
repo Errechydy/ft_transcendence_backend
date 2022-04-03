@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Room } from '../entities/room.entity';
 
 
@@ -9,15 +9,15 @@ export class CreateRoomDto {
 	@IsString()
 	name: string;
 
-	@Exclude()
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	password: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsBoolean()
 	locked: boolean;
 
+	@IsArray()
 	admins: number[] = [];
 
 	constructor(partial: Partial<Room>) {

@@ -15,7 +15,7 @@ export class BlockController {
 	@Get('users')
 	blockedList() {
 		const sessionId: number = 1; // TODO: get it from jwt
-		return this.blockService.blockedList(sessionId); // Return list of all blocked users
+		return this.blockService.blockedListUsers(sessionId); // Return list of all blocked users
 	}
 
 	@Delete()

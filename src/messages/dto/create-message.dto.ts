@@ -10,5 +10,6 @@ export class CreateMessageDto {
 	@IsString()
 	msg: string;
 
+	@IsNumber()
 	created: number = Date.now();
 }

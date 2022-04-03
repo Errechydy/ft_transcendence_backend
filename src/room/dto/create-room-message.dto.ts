@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateRoomMessageDto {
 
@@ -10,5 +10,6 @@ export class CreateRoomMessageDto {
 	@IsString()
 	msg: string;
 
+	@IsNumber()
 	created: number = Date.now();
 }

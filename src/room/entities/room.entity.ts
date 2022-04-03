@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -9,10 +10,10 @@ export class Room {
 	@Column()
 	name: string;
 
-	@Column()
+	@Column({ default: '' })
 	password: string;
 
-	@Column()
+	@Column("boolean", { default: false })
 	locked: boolean;
 
 	@Column()

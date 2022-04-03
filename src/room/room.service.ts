@@ -28,6 +28,14 @@ export class RoomService {
 
 	// Get room messages list
 	async findRoomMessages(sessionId: number, myBlockedList: number[], roomId: number) {
+
+		let whereBlock: string;
+
+		if( myBlockedList.length > 0 )
+			whereBlock = `AND public."user".id NOT IN ( ${myBlockedList.join(",")} )`;
+		else
+			whereBlock = ``;
+
 		const data = await getConnection().query(`
 			SELECT *  FROM
 				public."room_message"
@@ -36,8 +44,7 @@ export class RoomService {
 					ON
 						public."user".id = public."room_message".from_id
 				WHERE public."room_message".room_id = ${roomId} 
-				AND public."room_message".from_id = ${roomId}
-				AND public."room_message".from_id NOT IN ({implode(',',${myBlockedList}});
+				${whereBlock};
 		`);
 		if (!data)
 			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);
