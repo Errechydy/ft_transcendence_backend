@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe, Inject, forwardRef } from '@nestjs/common';
 import { RoomService } from 'src/room/room.service';
 import { BanService } from './ban.service';
 import { CreateBanDto } from './dto/create-ban.dto';
@@ -8,7 +8,10 @@ import { UpdateBanDto } from './dto/update-ban.dto';
 export class BanController {
 	constructor(
 		private readonly banService: BanService,
-		private readonly roomService: RoomService
+		// private readonly roomService: RoomService
+
+		@Inject(forwardRef(() => RoomService))
+    	private roomService: RoomService,
 	) {}
 
 	@Post()
@@ -33,6 +36,12 @@ export class BanController {
 		const roomData = await this.roomService.findOne(updateBanDto.room_id);
 
 		return this.banService.update(sessionId, roomData, updateBanDto);
+	}
+
+	
+	@Get('room/:roomId/banned')
+	roomBannedList(@Param('roomId', ParseIntPipe) roomId: string) {
+		return this.banService.roomBannedList(+roomId);
 	}
 
 	@Get('room/:roomId/user/:userId')

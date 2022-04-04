@@ -2,8 +2,9 @@
 0 - // TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
 
 - access private room ( with password, save in user session )
-
-1 - leave a room (button) 
+	: join room ===> append it to rooms[roomId1, roomId2, ...] and store it in jwt token
+	: leave a room (button) ===> remove the room id from rooms param that is stored in jwt token
+	
 2 - socketio
 3 - auth (jwt)
 
