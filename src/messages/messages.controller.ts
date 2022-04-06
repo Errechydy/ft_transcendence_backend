@@ -37,8 +37,7 @@ export class MessagesController {
 	async findOne(@Param('id', ParseIntPipe) id: string) {
 		const sessionId : number = 1;
 
-		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
-		return this.messagesService.findOne(sessionId, myBlockedList, +id);
+		return this.messagesService.findOne(sessionId, +id);
 	}
 
 	// Delete all messages that i've had with this user

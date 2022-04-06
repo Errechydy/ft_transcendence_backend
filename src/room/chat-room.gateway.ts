@@ -1,25 +1,28 @@
 import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
-import { BlockService } from "src/block/block.service";
-import { CreateMessageDto } from "./dto/create-message.dto";
-import { MessagesService } from "./messages.service";
 
+@WebSocketGateway(8000, {cors: true })
+export class ChatRoomGateway {
 
-@WebSocketGateway(7000, {cors: true })
-export class MessageGateway {
-
+/*	
 	constructor(
 		private readonly blockService: BlockService,
 		private readonly messagesService: MessagesService
 
 	) {}
 
-	@SubscribeMessage('private-chat')
+
+
+
+	@SubscribeMessage('chat-room')
 	async handleMessage(client, payload: any ) {
+
+
 
 		const sessionId : number = 2;
 		const userBlockedList: number[] = await this.blockService.blockedList(payload.data.to);
 		if(userBlockedList.includes(sessionId))
 		{
+			// console.log("blocked");
 			return { status: false }
 		}
 		else
@@ -29,6 +32,8 @@ export class MessageGateway {
 			messageDto.msg = payload.data.message;
 			this.messagesService.create(sessionId, messageDto);
 
+			payload.data.from = sessionId;
+
 
 			client.broadcast.to(payload.data.roomName).emit("message", payload);
 			return { status: true }
@@ -37,6 +42,19 @@ export class MessageGateway {
 
 	@SubscribeMessage('join-room')
 	async joinRoom(client, payload: any) {
-		client.join(payload.data.roomName);
+		// TODO: join the room
+		// if true
+		{
+			client.join(payload.data.roomName);
+			return { status: true }
+		}
+		// else
+		{
+
+			return { status: false }
+		}
+		
 	}
+	*/
+
 }

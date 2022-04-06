@@ -6,12 +6,12 @@ import { Room } from './entities/room.entity';
 import { RoomMessage } from './entities/room-message.entity';
 import { BlockModule } from 'src/block/block.module';
 import { BanModule } from 'src/ban/ban.module';
-import { ChatGateway } from './chat.gateway';
+import { ChatRoomGateway } from './chat-room.gateway';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Room, RoomMessage]), BlockModule, BanModule],
 	controllers: [RoomController],
-  	providers: [RoomService, ChatGateway],
+  	providers: [RoomService, ChatRoomGateway],
   	exports: [RoomService]
 })
 export class RoomModule {}

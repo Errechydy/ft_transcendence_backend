@@ -56,23 +56,18 @@ export class RoomController {
 		// my blocked list
 		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
 
-		// TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
-		
-		
-		const roomBannedList: number[] = await this.banService.roomBannedList(+roomId);
-
-		const excludeUsersList = myBlockedList.concat(roomBannedList);
-
-		return this.roomService.findRoomMessages(sessionId, excludeUsersList, +roomId);
+		return this.roomService.findRoomMessages(sessionId, myBlockedList, +roomId);
 	}
 
 	// Sould display room messages only if the room id exists in rooms[] jwt
 	// Save msg to room
 	@Post(':roomId')
-	saveMessageToRoom(@Param('roomId', ParseIntPipe) roomId: string, @Body() createRoomMessageDto: CreateRoomMessageDto) {
+	async saveMessageToRoom(@Param('roomId', ParseIntPipe) roomId: string, @Body() createRoomMessageDto: CreateRoomMessageDto) {
 		const sessionId: number = 1;
 
-		// Even if you're banned from this room, you still can send messages to this room as long as you joined it.
+		const roomBannedList: number[] = await this.banService.roomBannedList(+roomId);
+		if(roomBannedList.includes(sessionId))
+			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
 
 		return this.roomService.saveMessageToRoom(sessionId, createRoomMessageDto);
 	}

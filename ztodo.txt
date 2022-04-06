@@ -1,4 +1,8 @@
 
+join + leave room implimentation
+----------------------------
+
+
 0 - // TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
 
 - access private room ( with password, save in user session )

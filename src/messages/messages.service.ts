@@ -18,18 +18,16 @@ export class MessagesService {
 		
 	create(sessionId: number, createMessageDto: CreateMessageDto) {
 
-		
-		const newMessage = this.messageRepository.create(createMessageDto);
+		let newMessage = this.messageRepository.create(createMessageDto);
 		newMessage.from_id = sessionId;
+
 		return this.messageRepository.save(newMessage);
 	}
 
 
-	async findOne(sessionId: number, myBlockedList: number[], userId: number) {
+	async findOne(sessionId: number, userId: number) {
 
 
-		if(myBlockedList.includes(userId))
-			return [];
 
 		return this.messageRepository.createQueryBuilder('message')
 			.where(new Brackets(qb => {
