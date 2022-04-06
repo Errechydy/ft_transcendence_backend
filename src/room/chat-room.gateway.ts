@@ -1,40 +1,37 @@
 import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import { BanService } from "src/ban/ban.service";
+import { CreateRoomMessageDto } from "./dto/create-room-message.dto";
+import { RoomService } from "./room.service";
 
 @WebSocketGateway(8000, {cors: true })
 export class ChatRoomGateway {
 
-/*	
 	constructor(
-		private readonly blockService: BlockService,
-		private readonly messagesService: MessagesService
+		private readonly banService: BanService,
+		private readonly roomService: RoomService
 
 	) {}
-
-
-
 
 	@SubscribeMessage('chat-room')
 	async handleMessage(client, payload: any ) {
 
 
-
+		// banned list
 		const sessionId : number = 2;
-		const userBlockedList: number[] = await this.blockService.blockedList(payload.data.to);
-		if(userBlockedList.includes(sessionId))
+
+		const roomBannedList: number[] = await this.banService.roomBannedList(+payload.data.roomName);
+		if(roomBannedList.includes(sessionId))
 		{
-			// console.log("blocked");
-			return { status: false }
+			return { status: false } // console.log("blocked");
 		}
 		else
 		{
-			let messageDto = new CreateMessageDto();
-			messageDto.to_id = payload.data.to;
+			let messageDto = new CreateRoomMessageDto();
+			messageDto.room_id = +payload.data.roomName;
 			messageDto.msg = payload.data.message;
-			this.messagesService.create(sessionId, messageDto);
+			this.roomService.saveMessageToRoom(sessionId, messageDto);
 
 			payload.data.from = sessionId;
-
-
 			client.broadcast.to(payload.data.roomName).emit("message", payload);
 			return { status: true }
 		}
@@ -55,6 +52,22 @@ export class ChatRoomGateway {
 		}
 		
 	}
-	*/
+
+	@SubscribeMessage('leave-room')
+	async leaveRoom(client, payload: any) {
+		// TODO: join the room
+		// if true
+		{
+			client.leave(payload.data.roomName);
+			return { status: true }
+		}
+		// else
+		{
+
+			return { status: false }
+		}
+		
+	}
+	
 
 }

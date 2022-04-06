@@ -53,9 +53,9 @@ export class RoomService {
 
 	// Save room message
 	saveMessageToRoom(sessionId: number, createRoomMessageDto: CreateRoomMessageDto) {
-		const newRoom = this.roomsMessagesRepository.create(createRoomMessageDto);
-		newRoom.from_id = sessionId;
-		return this.roomsMessagesRepository.save(newRoom);
+		const newRoomMessage = this.roomsMessagesRepository.create(createRoomMessageDto);
+		newRoomMessage.from_id = sessionId;
+		return this.roomsMessagesRepository.save(newRoomMessage);
 	}
 
 	findAll() {
