@@ -1,7 +1,20 @@
 
-join + leave room implimentation
-----------------------------
 
+
+2 - encrypt room password before saving it, and don't return it to clients when returning rooms data
+
+3 - auth (jwt)
+4 - register a user ( unique nickName, upload image )
+
+
+--------------------------
+
+- socketio frontend code : 
+	- /rooms (rooms list because we use socketIO to join and to leave a room)
+	-/rooms/:roomId (for rooms messages socketIO)
+	-/messages/:userId (form private messages socketIO)
+
+--------------------------
 
 0 - // TODO : baned list : should include ids of all banned users of this room + muted list of this room that expired (created + banned.duration > date.now())
 
@@ -10,9 +23,6 @@ join + leave room implimentation
 	: leave a room (button) ===> remove the room id from rooms param that is stored in jwt token
 	
 2 - socketio
-3 - auth (jwt)
-
-
 --------------------------
 
 

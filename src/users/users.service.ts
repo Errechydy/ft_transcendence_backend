@@ -13,6 +13,12 @@ export class UsersService {
 		private usersRepository: Repository<User>,
 	) {}
 
+	arrayRemove(joinedRooms: number[], roomId: number) { 
+        return joinedRooms.filter(function(ele){ 
+            return ele != roomId; 
+        });
+    }
+
 	create(createUserDto: CreateUserDto): Promise<User> {
 		const newUser = this.usersRepository.create(createUserDto);
 		return this.usersRepository.save(newUser);
@@ -37,6 +43,26 @@ export class UsersService {
 		
 		return this.usersRepository.save(user);
 	}
+
+	async joinRoom(id: number, roomId: number): Promise<User> {
+		const userData = await this.findOne(id);
+		if( userData )
+			userData.joinedRooms.push(roomId);
+		// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
+		return this.usersRepository.save(userData);
+	}
+
+	async leaveRoom(id: number, roomId: number): Promise<User> {
+		const userData = await this.findOne(id);
+
+		if( userData )
+			userData.joinedRooms = this.arrayRemove(userData.joinedRooms, roomId);
+		
+		// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
+		return this.usersRepository.save(userData);
+	}
+
+
 
 	async remove(id: number): Promise<User> {
 		const user = await this.findOne(id);

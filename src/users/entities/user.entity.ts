@@ -11,5 +11,8 @@ export class User {
 	@Column()
 	lastName: string;
 
+	@Column("int", { array: true })
+	joinedRooms: number [];
+
 
 }

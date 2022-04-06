@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateUserDto {
 
@@ -9,4 +9,11 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	@IsString()
 	lastName: string;
+
+
+
+	@IsArray()
+	joinedRoom: number[] = [];
+
+
 }

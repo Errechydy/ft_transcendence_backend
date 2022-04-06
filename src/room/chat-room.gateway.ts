@@ -1,5 +1,6 @@
 import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { BanService } from "src/ban/ban.service";
+import { UsersService } from "src/users/users.service";
 import { CreateRoomMessageDto } from "./dto/create-room-message.dto";
 import { RoomService } from "./room.service";
 
@@ -8,16 +9,19 @@ export class ChatRoomGateway {
 
 	constructor(
 		private readonly banService: BanService,
-		private readonly roomService: RoomService
+		private readonly roomService: RoomService,
+		private readonly usersService: UsersService
 
 	) {}
 
 	@SubscribeMessage('chat-room')
 	async handleMessage(client, payload: any ) {
 
+		const sessionId : number = 2;
+
 
 		// banned list
-		const sessionId : number = 2;
+		
 
 		const roomBannedList: number[] = await this.banService.roomBannedList(+payload.data.roomName);
 		if(roomBannedList.includes(sessionId))
@@ -40,14 +44,17 @@ export class ChatRoomGateway {
 	@SubscribeMessage('join-room')
 	async joinRoom(client, payload: any) {
 		// TODO: join the room
-		// if true
+		// get room data (if it's private or public)
+		const roomData = await this.roomService.findOne(payload.data.roomName);
+		if ( !roomData.locked )
 		{
+			const sessionId : number = 2;
+			this.usersService.joinRoom(+sessionId, roomData.id);
 			client.join(payload.data.roomName);
 			return { status: true }
 		}
-		// else
+		else
 		{
-
 			return { status: false }
 		}
 		
@@ -56,14 +63,17 @@ export class ChatRoomGateway {
 	@SubscribeMessage('leave-room')
 	async leaveRoom(client, payload: any) {
 		// TODO: join the room
-		// if true
+		const sessionJoinedRooms: number[] = [1, 3, 4];
+		
+		if ( sessionJoinedRooms.includes(+payload.data.roomName) )
 		{
+			const sessionId : number = 2;
+			this.usersService.leaveRoom(+sessionId, +payload.data.roomName);
 			client.leave(payload.data.roomName);
 			return { status: true }
 		}
-		// else
+		else
 		{
-
 			return { status: false }
 		}
 		
