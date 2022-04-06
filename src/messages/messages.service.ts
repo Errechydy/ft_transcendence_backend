@@ -17,6 +17,8 @@ export class MessagesService {
 	) {}
 		
 	create(sessionId: number, createMessageDto: CreateMessageDto) {
+
+		
 		const newMessage = this.messageRepository.create(createMessageDto);
 		newMessage.from_id = sessionId;
 		return this.messageRepository.save(newMessage);
@@ -49,14 +51,7 @@ export class MessagesService {
 			.getMany();
 	}
 
-	async getChatList(sessionId: number, myBlockedList: number[]) {
-
-		let whereBlock: string;
-
-		if( myBlockedList.length > 0 )
-			whereBlock = `WHERE public."user".id NOT IN ( ${myBlockedList.join(",")} )`;
-		else
-			whereBlock = ``;
+	async getChatList(sessionId: number) {
 
 		return getConnection().query(`
 			SELECT * FROM
@@ -84,7 +79,6 @@ export class MessagesService {
 							) t2
 						ON
 							( from_id = ${sessionId} AND to_id = user_id OR from_id = user_id AND to_id = ${sessionId} )  AND created = m
-						${whereBlock}
 						ORDER BY
 							created DESC
 				`);

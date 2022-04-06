@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -16,8 +16,11 @@ export class MessagesController {
 		- from_id, to_id, msg
 	*/
 	@Post()
-	create(@Body() createMessageDto: CreateMessageDto) {
+	async create(@Body() createMessageDto: CreateMessageDto) {
 		const sessionId : number = 1;
+		const userBlockedList: number[] = await this.blockService.blockedList(createMessageDto.to_id);
+		if(userBlockedList.includes(sessionId))
+			throw new HttpException({ message: 'You can\'t send message to this user!' }, HttpStatus.UNAUTHORIZED);
 		return this.messagesService.create(sessionId, createMessageDto);
 	}
 
@@ -25,8 +28,7 @@ export class MessagesController {
 	@Get()
 	async findAll() {
 		const sessionId : number = 1;
-		const myBlockedList: number[] = await this.blockService.blockedList(sessionId);
-		return this.messagesService.getChatList(sessionId, myBlockedList);
+		return this.messagesService.getChatList(sessionId);
 		// return this.messagesService.findAll();
 	}
 
