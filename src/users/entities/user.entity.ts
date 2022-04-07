@@ -12,7 +12,7 @@ export class User {
 	lastName: string;
 
 	@Column("int", { array: true })
-	joinedRooms: number [];
+	joinedRooms: number [] = [];
 
 
 }

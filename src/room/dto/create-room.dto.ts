@@ -2,7 +2,6 @@ import { Exclude } from 'class-transformer';
 import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Room } from '../entities/room.entity';
 
-
 export class CreateRoomDto {
 
 	@IsNotEmpty()
@@ -13,7 +12,6 @@ export class CreateRoomDto {
 	@IsString()
 	password: string;
 
-	@IsOptional()
 	@IsBoolean()
 	locked: boolean;
 

@@ -12,6 +12,12 @@ export class UsersController {
 		return this.usersService.create(createUserDto);
 	}
 
+
+	@Get('register')
+	register() {
+		return 'Register user using 42 data';
+	}
+
 	@Get()
 	findAll() {
 		return this.usersService.findAll();

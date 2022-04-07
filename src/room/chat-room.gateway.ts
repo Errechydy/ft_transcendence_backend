@@ -45,11 +45,11 @@ export class ChatRoomGateway {
 	async joinRoom(client, payload: any) {
 		// TODO: join the room
 		// get room data (if it's private or public)
-		const roomData = await this.roomService.findOne(payload.data.roomName);
-		if ( !roomData.locked )
+		const authStatus = await this.roomService.checkAuth(+payload.data.roomName, payload.data.password);
+		if ( authStatus )
 		{
 			const sessionId : number = 2;
-			this.usersService.joinRoom(+sessionId, roomData.id);
+			this.usersService.joinRoom(+sessionId, +payload.data.roomName);
 			client.join(payload.data.roomName);
 			return { status: true }
 		}

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Inject, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Inject, forwardRef, HttpException, HttpStatus, ClassSerializerInterceptor } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -18,12 +18,14 @@ export class RoomController {
 
 	) {}
 
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Post()
 	create(@Body() createRoomDto: CreateRoomDto) {
 		const sessionId : number = 1;
 		return this.roomService.create(sessionId, createRoomDto);
 	}
 
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Get()
 	findAll() {
 		return this.roomService.findAll();
@@ -35,12 +37,14 @@ export class RoomController {
 	// 	return this.roomService.findOne(+id);
 	// }
 
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Patch(':id')
 	update(@Param('id', ParseIntPipe) id: string, @Body() updateRoomDto: UpdateRoomDto) {
 		const sessionId: number = 1;
 		return this.roomService.update(sessionId, +id, updateRoomDto);
 	}
 
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Delete(':id')
 	remove(@Param('id', ParseIntPipe) id: string) {
 		const sessionId: number = 1;
@@ -59,8 +63,8 @@ export class RoomController {
 		return this.roomService.findRoomMessages(sessionId, myBlockedList, +roomId);
 	}
 
-	// Sould display room messages only if the room id exists in rooms[] jwt
 	// Save msg to room
+	// Sould display room messages only if the room id exists in rooms[] jwt
 	@Post(':roomId')
 	async saveMessageToRoom(@Param('roomId', ParseIntPipe) roomId: string, @Body() createRoomMessageDto: CreateRoomMessageDto) {
 		const sessionId: number = 1;
@@ -72,31 +76,4 @@ export class RoomController {
 		return this.roomService.saveMessageToRoom(sessionId, createRoomMessageDto);
 	}
 
-	// Join this room
-	@Get(':roomId/join')
-	joinRoom(@Param('roomId', ParseIntPipe) roomId: string) {
-		const sessionId: number = 1;
-
-		// append it to rooms[roomId1, roomId2, ...] and store it in jwt token
-		// if( already joined )
-		// 	throw new HttpException({ message: 'You already joined this room!' }, HttpStatus.UNAUTHORIZED);
-		// else
-			return {
-				"status": true
-			}
-	}
-
-	// Leave this room
-	@Get(':roomId/join')
-	leaveRoom(@Param('roomId', ParseIntPipe) roomId: string) {
-		const sessionId: number = 1;
-
-		// remove the room id from rooms param that is stored in jwt token
-		// if( not joined )
-		// 	throw new HttpException({ message: 'You haven\'t joined this room to leave it!' }, HttpStatus.UNAUTHORIZED);
-		// else
-			return {
-				"status": true
-			}
-	}
 }

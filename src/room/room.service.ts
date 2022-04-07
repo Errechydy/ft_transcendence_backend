@@ -6,6 +6,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomMessage } from './entities/room-message.entity';
 import { Room } from './entities/room.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class RoomService {
@@ -20,8 +21,20 @@ export class RoomService {
 	) {}
 
 
-	create(sessionId: number, createRoomDto: CreateRoomDto) {
+	async create(sessionId: number, createRoomDto: CreateRoomDto) {
 		const newRoom = this.roomsRepository.create(createRoomDto);
+
+
+		if( newRoom.locked )
+		{
+			const saltOrRounds = 10;
+			const password = newRoom.password;
+			const hash = await bcrypt.hash(password, saltOrRounds);
+			newRoom.password = hash;
+		}
+		
+
+
 		newRoom.owner_id = sessionId;
 		return this.roomsRepository.save(newRoom);
 	}
@@ -75,9 +88,15 @@ export class RoomService {
 		if(sessionId == room.owner_id)
 			throw new HttpException({ message: 'You can\'t edit this room!' }, HttpStatus.UNAUTHORIZED);
 
-
 		room.name = updateRoomDto.name;
-		room.password = updateRoomDto.password;
+
+		if( updateRoomDto.locked )
+		{
+			const saltOrRounds = 10;
+			const password = updateRoomDto.password;
+			const hash = await bcrypt.hash(password, saltOrRounds);
+			room.password = hash;
+		}
 		room.admins = updateRoomDto.admins;
 		
 		return this.roomsRepository.save(room);
@@ -90,6 +109,21 @@ export class RoomService {
 
 		if(room)
 			return this.roomsRepository.remove(room);
+	}
+
+	async checkAuth(roomId: number, password: string) {
+		const roomData = await this.findOne(roomId);
+
+		if( !roomData.locked )
+			return true;
+		else
+		{
+			const passwordsMatch = await bcrypt.compare(password, roomData.password);
+			if ( passwordsMatch )
+				return true;
+			else
+				return false;
+		}
 	}
 	
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { RoomController } from './room.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,9 +7,11 @@ import { RoomMessage } from './entities/room-message.entity';
 import { BlockModule } from 'src/block/block.module';
 import { BanModule } from 'src/ban/ban.module';
 import { ChatRoomGateway } from './chat-room.gateway';
+import { UsersModule } from 'src/users/users.module';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Room, RoomMessage]), BlockModule, BanModule],
+	imports: [TypeOrmModule.forFeature([Room, RoomMessage]), BlockModule, BanModule, UsersModule],
 	controllers: [RoomController],
   	providers: [RoomService, ChatRoomGateway],
   	exports: [RoomService]

@@ -1,3 +1,4 @@
+
 import { Exclude } from 'class-transformer';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -11,6 +12,7 @@ export class Room {
 	name: string;
 
 	@Column({ default: '' })
+	@Exclude()
 	password: string;
 
 	@Column("boolean", { default: false })
