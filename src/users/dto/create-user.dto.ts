@@ -1,6 +1,10 @@
-import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateUserDto {
+
+	@IsNotEmpty()
+	@IsString()
+	username: string;
 
 	@IsNotEmpty()
 	@IsString()
@@ -10,7 +14,16 @@ export class CreateUserDto {
 	@IsString()
 	lastName: string;
 
+	@IsNotEmpty()
+	@IsString()
+	avatar: string;
 
+	@IsBoolean()
+	twoWayAuth: boolean = false;
+
+	@IsNotEmpty()
+	@IsString()
+	password: string;
 
 	@IsArray()
 	joinedRoom: number[] = [];

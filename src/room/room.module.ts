@@ -8,7 +8,6 @@ import { BlockModule } from 'src/block/block.module';
 import { BanModule } from 'src/ban/ban.module';
 import { ChatRoomGateway } from './chat-room.gateway';
 import { UsersModule } from 'src/users/users.module';
-import { UsersService } from 'src/users/users.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Room, RoomMessage]), BlockModule, BanModule, UsersModule],

@@ -10,6 +10,9 @@ import { MessagesModule } from './messages/messages.module';
 import { RoomModule } from './room/room.module';
 import { BanModule } from './ban/ban.module';
 import { BlockModule } from './block/block.module';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -24,6 +27,7 @@ import { BlockModule } from './block/block.module';
 		RoomModule,
 		BanModule,
 		BlockModule,
+		AuthModule
 	
 
 	],
