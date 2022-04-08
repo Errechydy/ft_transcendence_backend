@@ -16,8 +16,8 @@ export class MessageGateway {
 	@SubscribeMessage('private-chat')
 	async handleMessage(client, payload: any ) {
 
-		const sessionId : number = 2;
-		const userBlockedList: number[] = await this.blockService.blockedList(payload.data.to);
+		const sessionId : number = +payload.data.from;
+		const userBlockedList: number[] = await this.blockService.blockedList(+payload.data.to);
 		if(userBlockedList.includes(sessionId))
 		{
 			return { status: false }
@@ -25,7 +25,7 @@ export class MessageGateway {
 		else
 		{
 			let messageDto = new CreateMessageDto();
-			messageDto.to_id = payload.data.to;
+			messageDto.to_id = +payload.data.to;
 			messageDto.msg = payload.data.message;
 			this.messagesService.create(sessionId, messageDto);
 

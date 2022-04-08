@@ -52,14 +52,16 @@ export class UsersService {
 		return this.usersRepository.save(userData);
 	}
 
-	async leaveRoom(id: number, roomId: number): Promise<User> {
+	async leaveRoom(id: number, roomId: number): Promise<boolean> {
 		const userData = await this.findOne(id);
-
-		if( userData )
+		if( userData && userData.joinedRooms.includes(roomId) )
+		{
 			userData.joinedRooms = this.arrayRemove(userData.joinedRooms, roomId);
+			// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
+			return true;
+		}
 		
-		// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
-		return this.usersRepository.save(userData);
+		return false;
 	}
 
 

@@ -8,6 +8,13 @@
 
 
 --------------------------
+			IMPORTANT 
+--------------------------
+- Change all sessionId ( or user's session data )  to req.user.id
+- users.service.ts: leaveRoom() + joinRoom() ===> make new JwT that includes the new joinedRooms[] data
+
+--------------------------
+--------------------------
 
 - socketio frontend code : 
 	- /rooms (rooms list because we use socketIO to join and to leave a room)
