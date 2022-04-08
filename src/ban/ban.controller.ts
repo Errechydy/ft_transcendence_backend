@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe, Inject, forwardRef } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ValidationPipe, Inject, forwardRef, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { RoomService } from 'src/room/room.service';
 import { BanService } from './ban.service';
 import { CreateBanDto } from './dto/create-ban.dto';
 import { UpdateBanDto } from './dto/update-ban.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('ban')
 export class BanController {
 	constructor(

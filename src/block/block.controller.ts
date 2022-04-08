@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { BlockService } from './block.service';
 import { CreateBlockDto } from './dto/create-block.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('block')
 export class BlockController {
   constructor(private readonly blockService: BlockService) {}

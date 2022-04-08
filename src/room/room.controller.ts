@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Inject, forwardRef, HttpException, HttpStatus, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseIntPipe, Inject, forwardRef, HttpException, HttpStatus, ClassSerializerInterceptor, UseGuards } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { CreateRoomMessageDto } from './dto/create-room-message.dto';
 import { BlockService } from 'src/block/block.service';
 import { BanService } from 'src/ban/ban.service';
+import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('room')
 export class RoomController {
 

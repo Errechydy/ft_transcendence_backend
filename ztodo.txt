@@ -1,10 +1,7 @@
 
 
-
-2 - encrypt room password before saving it, and don't return it to clients when returning rooms data
-
-3 - auth (jwt)
-4 - register a user ( unique nickName, upload image )
+2 - Edit user's profile ( Upload avatar )
+3 - Integrate 42 oauth
 
 
 --------------------------
@@ -39,4 +36,11 @@
 						if the user is banned or muted from the Roo ===> then filter his missages (remove them from the results)
 						if "I" blocked the user then filter his messages (remove them from the results)
 
+----------
+
+
+2 - encrypt room password before saving it, and don't return it to clients when returning rooms data
+
+3 - auth (jwt)
+4 - register a user ( unique nickName, upload image )
 
