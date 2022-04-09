@@ -24,8 +24,6 @@ export class UsersService {
 		return this.usersRepository.save(newUser);
 	}
 
-
-
 	findAll() {
 		return this.usersRepository.find();
 	}
@@ -37,24 +35,43 @@ export class UsersService {
 		return data;
 	}
 
-	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+	async update(id: number, updateUserDto: UpdateUserDto, file: Express.Multer.File): Promise<User> {
 		const user = await this.findOne(id);
 
-		user.firstName = updateUserDto.firstName;
-		user.lastName = updateUserDto.lastName;
-
-		// TODO: delete later
-		user.avatar = updateUserDto.avatar;
+		user.username = updateUserDto.username;
+		if(file)
+			user.avatar = file.filename;
 		
 		return this.usersRepository.save(user);
 	}
 
-	async joinRoom(id: number, roomId: number): Promise<User> {
+	async winGame(id: number): Promise<User> {
+		const user = await this.findOne(id);
+
+		user.win = user.win + 1;
+		
+		return this.usersRepository.save(user);
+	}
+
+	async lostGame(id: number): Promise<User> {
+		const user = await this.findOne(id);
+
+		user.lost = user.lost + 1;
+		
+		return this.usersRepository.save(user);
+	}
+
+	async joinRoom(id: number, roomId: number): Promise<boolean> {
 		const userData = await this.findOne(id);
-		if( userData )
+		if( userData && !userData.joinedRooms.includes(roomId))
+		{
 			userData.joinedRooms.push(roomId);
-		// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
-		return this.usersRepository.save(userData);
+			// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
+			this.usersRepository.save(userData);
+			return true;
+		}
+		else
+			return false
 	}
 
 	async leaveRoom(id: number, roomId: number): Promise<boolean> {
@@ -76,4 +93,6 @@ export class UsersService {
 		if(user)
 			return this.usersRepository.remove(user);
 	}
+
+
 }

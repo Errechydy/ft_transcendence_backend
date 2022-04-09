@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
 
@@ -6,17 +6,17 @@ export class CreateUserDto {
 	@IsString()
 	username: string;
 
-	@IsNotEmpty()
-	@IsString()
-	firstName: string;
+	@IsOptional()
+	@IsNumber()
+	win: number = 0;
 
-	@IsNotEmpty()
-	@IsString()
-	lastName: string;
+	@IsOptional()
+	@IsNumber()
+	lost: number = 0;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
-	avatar: string;
+	avatar: string = 'default-avatar.png';
 
 	@IsBoolean()
 	twoWayAuth: boolean = false;

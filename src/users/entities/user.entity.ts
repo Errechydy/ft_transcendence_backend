@@ -8,11 +8,11 @@ export class User {
 	@Column({ unique: true })
 	username: string;
 
-	@Column()
-	firstName: string;
+	@Column('int', {default: 0})
+	win: number;
 
-	@Column()
-	lastName: string;
+	@Column('int', {default: 0})
+	lost: number;
 
 	@Column()
 	avatar: string;
