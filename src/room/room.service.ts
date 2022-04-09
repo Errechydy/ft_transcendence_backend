@@ -57,7 +57,9 @@ export class RoomService {
 					ON
 						public."user".id = public."room_message".from_id
 				WHERE public."room_message".room_id = ${roomId} 
-				${whereBlock};
+				${whereBlock}
+				ORDER BY
+				public."room_message".id ASC;
 		`);
 		if (!data)
 			throw new HttpException({ message: 'Room Not Found' }, HttpStatus.NOT_FOUND);

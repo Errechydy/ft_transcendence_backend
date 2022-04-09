@@ -3,7 +3,7 @@
 2 - Edit user's profile ( Upload avatar )
 3 - Integrate 42 oauth
 
-
+npm remove @vue/cli-plugin-eslint
 --------------------------
 			IMPORTANT 
 --------------------------

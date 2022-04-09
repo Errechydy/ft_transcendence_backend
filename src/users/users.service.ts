@@ -42,6 +42,9 @@ export class UsersService {
 
 		user.firstName = updateUserDto.firstName;
 		user.lastName = updateUserDto.lastName;
+
+		// TODO: delete later
+		user.avatar = updateUserDto.avatar;
 		
 		return this.usersRepository.save(user);
 	}

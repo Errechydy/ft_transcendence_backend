@@ -53,6 +53,7 @@ export class RoomController {
 		return this.roomService.remove(sessionId, +id);
 	}
 
+
 	// Sould display room messages only if the room id exists in rooms[] jwt
 	// Get room messages
 	@Get(':roomId/messages')
