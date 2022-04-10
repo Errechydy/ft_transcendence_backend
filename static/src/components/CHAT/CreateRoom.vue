@@ -155,11 +155,7 @@
                   ease-in
                 "
               >
-                <div class="bg-white border-2 rounded border-gray-400 w-6 h-6 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-blue-500">
-                  <input type="checkbox" @click="changeAccess" class="opacity-0 absolute">
-                  <svg class="fill-current hidden w-4 h-4 text-green-500 pointer-events-none"  :class="{checked : is_private}"  viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
-                </div>
-                  <label class="text-gray-600">private</label>
+
               </div>
 
             </div>
@@ -172,6 +168,7 @@
 <script lang="ts">
 import router from '@/router';
 import store from '@/store';
+import axios from 'axios';
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -185,7 +182,6 @@ export default defineComponent({
             tmp_name: '' as string,
             invalid_name: false as boolean,
             inavlid_pass: false as boolean,
-            is_private: false as boolean,
       }
     },
     methods: {
@@ -193,21 +189,34 @@ export default defineComponent({
         {
             this.tmp_name = this.room_name.trim();
             this.tmp_password = this.room_password.trim();
-            if (this.tmp_name.length !== 0 && this.tmp_password.length !== 0)
+            if (this.tmp_name.length !== 0)
             {
-                // means password and name are valid
-                // here i will send to some endpoint name and pass and user_id  and user name
-                // i have user name and id in store maybe i will use them
-                // room_name has name with spaces maybe i will use tmp_name since tmp_name has no spaces at end and start
-                console.log(`create room with ${this.room_name} ${this.room_password}`);
-                // i'm assuming that password and name are valid
-                store.commit('addRoom', {
-                  room_id: 0, // this id will be updated inside mutations
-                  room_name: this.tmp_name,
-                  is_locked: this.is_private
-                });
-                router.push({name: 'chatpublic'});
-            }else
+
+
+				const resp = await axios.post(
+					`http://localhost:3000/api/v1/room`,
+					{
+						"name": this.tmp_name,
+						"locked": this.tmp_password.length > 0 ? true : false,
+						"password": this.tmp_password
+					},
+					{
+						headers: { Authorization: `Bearer ${localStorage.token}` }
+					}
+				);
+
+	            if(!resp.data.status)
+				{
+					this.invalid_name = true;
+                	this.inavlid_pass = true;
+				}
+				else
+				{
+					store.commit('addRoom', resp.data.roomData);
+					router.push({name: 'chatpublic'});
+				}
+            }
+			else
             {
                 this.invalid_name = !this.tmp_name.length;
                 this.inavlid_pass = !this.tmp_password.length;
@@ -223,10 +232,6 @@ export default defineComponent({
                 else
                     this.inavlid_pass = false;
             }
-        },
-        changeAccess()
-        {
-          this.is_private = !this.is_private;
         }
     }
 })

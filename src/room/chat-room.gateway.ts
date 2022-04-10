@@ -18,11 +18,7 @@ export class ChatRoomGateway {
 	async handleMessage(client, payload: any ) {
 
 		const sessionId : number = +payload.data.from;
-
-
-		// banned list
-		
-
+		// // banned list
 		const roomBannedList: number[] = await this.banService.roomBannedList(+payload.data.roomName);
 		if(roomBannedList.includes(sessionId))
 		{
@@ -35,7 +31,7 @@ export class ChatRoomGateway {
 			messageDto.msg = payload.data.message;
 			this.roomService.saveMessageToRoom(sessionId, messageDto);
 
-			payload.data.from = sessionId;
+			// payload.data.from = sessionId;
 			client.broadcast.to(payload.data.roomName).emit("message", payload);
 			return { status: true }
 		}
@@ -58,6 +54,12 @@ export class ChatRoomGateway {
 			return { status: false }
 		}
 		
+	}
+
+
+	@SubscribeMessage('join-room-m')
+	async joinRoomM(client, payload: any) {
+		client.join(payload.data.roomName);		
 	}
 
 	@SubscribeMessage('leave-room')

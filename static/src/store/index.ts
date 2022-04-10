@@ -113,8 +113,7 @@ export default createStore({
     },
     addRoom(state:any, room:Room)
     {
-      room.id = state.rooms[state.rooms.length - 1].id + 1;
-      state.rooms.push(room);
+      	state.rooms.push(room);
     },
     updateChatState(state:any, index:number)
     {

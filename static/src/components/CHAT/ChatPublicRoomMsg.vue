@@ -10,12 +10,12 @@
          >
 		 	
 		 	<div class="px-5 my-2 text-gray-700 relative text-orange-500" style="max-width: 300px;">
-				<img class="hidden sm:block w-full h-auto" loading="lazy" :src="msg.avatar" alt="" width="50px" height="50px" style="width: 50px; margin: auto;">
+				<img class="hidden sm:block w-full h-auto" loading="lazy" :src="'http://localhost:3000/uploads/'+msg.avatar" alt="" width="50px" height="50px" style="width: 50px; margin: auto;">
               	<span class="block"> {{ msg.username }} </span>
             </div>
             <div class="bg-gray-100 rounded px-5 py-2 my-2 text-gray-700 relative" style="max-width: 300px;">
                <span class="block"> {{ msg.msg }} </span>
-               <span class="block text-xs text-right"> {{ msg.created }} </span>
+               <span class="block text-xs text-right"> {{ timestampToDateTime(+msg.created) }} </span>
             </div>
 
             
@@ -68,51 +68,43 @@ const globalComponentRoomMessages =  defineComponent({
       return {
          curMsgData: '' as string,
          roomId: Number(this.$route.query.roomId),
+		 token: '' as string,
+		 userId: 0,
+		 username: '' as string,
+		 avatar: '' as string,
+		 joinedRooms: [] as number[],
       }
-   },created(){
-	   this.getRoomsMessages();
    },
+   mounted() {
+
+		if (localStorage.userId) {
+			this.userId = localStorage.userId;
+		}
+		if (localStorage.token) {
+			this.token = localStorage.token;
+		}
+		if (localStorage.avatar) {
+			this.avatar = localStorage.avatar;
+		}
+		if (localStorage.username) {
+			this.username = localStorage.username;
+		}
+		if (localStorage.joinedRooms) {
+			this.joinedRooms = localStorage.joinedRooms;
+		}
+	   this.getRoomsMessages();
+	   joinTheRoom(localStorage.userId, this.roomId);
+  	},
    methods: {
 	   async getRoomsMessages()
         {
-
-		
-			// Problem
-			/*
-			const app = new Vue({
-  el: '#app',
-  data: {
-    name: '',
-    age: 0
-  },
-  mounted() {
-    if (localStorage.name) {
-      this.name = localStorage.name;
-    }
-    if (localStorage.age) {
-      this.age = localStorage.age;
-    }
-  },
-  methods: {
-    persist() {
-      localStorage.name = this.name;
-      localStorage.age = this.age;
-      console.log('now pretend I did more stuff...');
-    }
-  }
-})
-			*/
-			console.log("store.getters.getUserId");
-			console.log(store.getters.getUserId);
-
-
 
 			// Append roomId to the url
             const resp = await axios.get(
 				`http://localhost:3000/api/v1/room/${this.roomId}/messages`,
 				// `http://localhost:3000/api/v1/room/1/messages`,
 				{
-					headers: { Authorization: `Bearer ${store.getters.getUserToken}` }
+					headers: { Authorization: `Bearer ${this.token}` }
 				}
 			);
             const data = resp.data;
@@ -124,22 +116,54 @@ const globalComponentRoomMessages =  defineComponent({
          const tmp = this.curMsgData.trim();
          if (tmp.length !== 0)
          {
-			handleSubmitNewMessage(store.getters.getUserId, this.roomId, tmp);
+			handleSubmitNewMessage(this.userId, this.username, this.avatar, this.roomId, tmp);
+			this.curMsgData = '';
          }
       },
+
 	  appendMessage(message: string)
       {
 		  const msgObj = {
                   	id: 0,
 					room_id: 0,
-					from_id: 0,
-					username: store.getters.getUsername,
-					avatar: store.getters.getAvatar,
+					from_id: localStorage.userId,
+					username: localStorage.username,
+					avatar: localStorage.avatar,
 					msg: message,
 					created: Date.now(),
             };
             this.curMsgData = '';
             store.commit('addMessageToRoomMsgs', msgObj);
+	  },
+
+	  newMessage(data: any)
+      {
+
+		
+
+		  const msgObj = {
+                  	id: 0,
+					room_id: 0,
+					from_id: data.from,
+					username: data.username,
+					avatar: data.avatar,
+					msg: data.message,
+					created: Date.now(),
+            };
+            this.curMsgData = '';
+            store.commit('addMessageToRoomMsgs', msgObj);
+	  },
+	  timestampToDateTime(unix_timestamp: number)
+	  {
+			var a = new Date(unix_timestamp);
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var hour = a.getHours();
+			var min = a.getMinutes();
+			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+			return time;
 	  }
    },
 
@@ -152,7 +176,6 @@ const globalComponentRoomMessages =  defineComponent({
    computed: {
       currentMsgs() : Array<message>
       {
-		  console.log(``);
          return store.getters.getMsgs;
       }
    }
@@ -172,15 +195,11 @@ const socket = io("http://localhost:8000")
 
 // receive message
 socket.on("message", ({ data }) => {
-
-	console.log("New message has been received!");
-
-	// TODO: if data.from is in my blocked list then don't show this message
-	// handleNewMessage(data.message);
+	globalComponentRoomMessages.methods!.newMessage(data);
 })
 
 // send message
-const handleSubmitNewMessage = (from: number, roomName: number, message: string) => {
+const handleSubmitNewMessage = (from: number, username: string, avatar: string, roomName: number, message: string) => {
 
 
 	socket.emit(
@@ -188,6 +207,8 @@ const handleSubmitNewMessage = (from: number, roomName: number, message: string)
 				{ 
 					data: {
 						from: from,
+						username: username,
+						avatar: avatar,
 						roomName: roomName,
 						message: message
 					}
@@ -205,6 +226,21 @@ const handleSubmitNewMessage = (from: number, roomName: number, message: string)
 
 
 // // join room
+const joinTheRoom = (userId: number, roomId: number) => {
+	socket.emit(
+		'join-room-m',
+		{ 
+			data: {
+				from: userId,
+				roomName: roomId,
+			}
+		}
+	)
+}
+
+
+
+// Leave room
 // const leaveTheRoom = () => {
 // 	socket.emit(
 // 		'leave-room',

@@ -39,8 +39,6 @@ export class UsersController {
 		return this.usersService.findOne(+id);
 	}
 
-	// @UseInterceptors(FileInterceptor('avatar', { dest: './static/dist/uploads/' }))
-
 	@UseInterceptors(
 		FileInterceptor('avatar', {
 		  storage: diskStorage({
@@ -61,4 +59,13 @@ export class UsersController {
 	remove(@Param('id', ParseIntPipe) id: string) {
 		return this.usersService.remove(+id);
 	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get(':id/current')
+	getCurrentLoggedinUser(@Request() req) {
+
+		return this.usersService.findOne(+req.user.id);
+	}
+
+
 }

@@ -7,8 +7,8 @@ const socket = io("http://localhost:8000")
 const message = document.getElementById('message');
 const messages = document.getElementById('messages');
 
-const myJwtId = 4; 
-const roomName = '4';
+const myJwtId = 2; 
+const roomName = '2';
 
 // send message
 const handleSubmitNewMessage = () => {

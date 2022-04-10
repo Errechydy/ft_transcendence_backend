@@ -32,11 +32,26 @@ export class RoomService {
 			const hash = await bcrypt.hash(password, saltOrRounds);
 			newRoom.password = hash;
 		}
+		else
+		{
+			newRoom.password = "";
+		}
 		
 
 
 		newRoom.owner_id = sessionId;
-		return this.roomsRepository.save(newRoom);
+		const data = await this.roomsRepository.save(newRoom);
+		if(data)
+		{
+			return {
+				status: true,
+				roomData : data
+			};
+		}
+		else
+		{
+			return { status: false };
+		}
 	}
 
 	// Get room messages list

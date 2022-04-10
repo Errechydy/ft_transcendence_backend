@@ -104,24 +104,42 @@ const globalComponent = defineComponent({
         return {
             invalid_pass: false as boolean,
             user_room_pass: '' as string,
-            typing_room_id: -1 as number,            
+            typing_room_id: -1 as number,    
+			token: '' as String,
+			userId: 0,
+			username: '' as String,
+			avatar: '' as String,
+			joinedRooms: [] as Number[],        
         }
     },
-    created()
-    {
+	mounted() {
+		if (localStorage.userId) {
+			this.userId = localStorage.userId;
+		}
+		if (localStorage.token) {
+			this.token = localStorage.token;
+		}
+		if (localStorage.avatar) {
+			this.avatar = localStorage.avatar;
+		}
+		if (localStorage.username) {
+			this.username = localStorage.username;
+		}
+		if (localStorage.joinedRooms) {
+			this.joinedRooms = localStorage.joinedRooms;
+		}
         this.getRooms();
-		store.commit('setUserData', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImpvaW5lZFJvb21zIjpbNCw0LDRdLCJ1c2VybmFtZSI6InVzZXJuYW1lIDEiLCJhdmF0YXIiOiJodHRwczovL3d3dy5wYXZpbGlvbndlYi5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMTcvMDMvbWFuLnBuZyIsImlhdCI6MTY0OTUyNTcxOCwiZXhwIjoxNjUyMTE3NzE4fQ.36_V25whe5b6WOAe-6Uaxr2itQiQhUqsJ2FnYlukG24');
-    },
+
+  	},
     methods: {
         async getRooms()
         {
-            if (store.getters.getRooms.length !== 0) // this important do not remove it
-                return ;
             try {
+
                 const resp = await axios.get(
 					`http://localhost:3000/api/v1/room`,
 					{
-						headers: { Authorization: `Bearer ${store.getters.getUserToken}` }
+						headers: { Authorization: `Bearer ${this.token}` }
 					}
 				);
                 const data = resp.data;
@@ -139,7 +157,7 @@ const globalComponent = defineComponent({
             if (is_locked)
                 this.joinToPrivateRoom(room_id);
             else
-                joinTheRoom(store.getters.getUserId, room_id, '');
+                joinTheRoom(this.userId, room_id, '');
         },
         joinToPrivateRoom(room_id:number)
         {
@@ -153,7 +171,7 @@ const globalComponent = defineComponent({
                 // i will send password to backend to chek if password is correct
                 // just for testing i'm assuming that password is correct so i will fill the store
                 // and redirect him to chat messages block
-                joinTheRoom(store.getters.getUserId, room.id, tmp_pass);
+                joinTheRoom(this.userId, room.id, tmp_pass);
             }else{
                 this.invalid_pass = true;
             }
@@ -174,8 +192,6 @@ const globalComponent = defineComponent({
 
 			store.commit('setRoomId', room_id);
 
-
-			console.log(store.getters.getCurrentRoomId);
 
 
 
@@ -201,7 +217,7 @@ const globalComponent = defineComponent({
         },
 		isJoined(id:number)
 		{
-			return store.getters.getJoinedRooms.includes(id);
+			return this.joinedRooms.includes(id);
 		}
     },
     directives:
@@ -231,7 +247,6 @@ export default globalComponent;
 
 const socket = io("http://localhost:8000")
 const joinTheRoom = (userId: number, roomId: number, password: string) => {
-
 	socket.emit(
 		'join-room',
 		{ 
