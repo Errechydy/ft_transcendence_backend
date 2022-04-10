@@ -67,6 +67,7 @@ const globalComponentRoomMessages =  defineComponent({
    {
       return {
          curMsgData: '' as string,
+         roomId: Number(this.$route.query.roomId),
       }
    },created(){
 	   this.getRoomsMessages();
@@ -75,11 +76,40 @@ const globalComponentRoomMessages =  defineComponent({
 	   async getRoomsMessages()
         {
 
-			console.log(store.getters.getCurrentRoomId);
+		
+			// Problem
+			/*
+			const app = new Vue({
+  el: '#app',
+  data: {
+    name: '',
+    age: 0
+  },
+  mounted() {
+    if (localStorage.name) {
+      this.name = localStorage.name;
+    }
+    if (localStorage.age) {
+      this.age = localStorage.age;
+    }
+  },
+  methods: {
+    persist() {
+      localStorage.name = this.name;
+      localStorage.age = this.age;
+      console.log('now pretend I did more stuff...');
+    }
+  }
+})
+			*/
+			console.log("store.getters.getUserId");
+			console.log(store.getters.getUserId);
+
+
 
 			// Append roomId to the url
             const resp = await axios.get(
-				`http://localhost:3000/api/v1/room/${store.getters.getCurrentRoomId}/messages`,
+				`http://localhost:3000/api/v1/room/${this.roomId}/messages`,
 				// `http://localhost:3000/api/v1/room/1/messages`,
 				{
 					headers: { Authorization: `Bearer ${store.getters.getUserToken}` }
@@ -94,7 +124,7 @@ const globalComponentRoomMessages =  defineComponent({
          const tmp = this.curMsgData.trim();
          if (tmp.length !== 0)
          {
-			handleSubmitNewMessage(store.getters.getUserId, store.getters.getCurrentRoomId, tmp);
+			handleSubmitNewMessage(store.getters.getUserId, this.roomId, tmp);
          }
       },
 	  appendMessage(message: string)

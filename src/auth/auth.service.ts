@@ -21,7 +21,7 @@ export class AuthService {
 
 	async login(user: any)
 	{
-		const payload = { sub: user.id, joinedRooms: user.joinedRooms, username: user.username, avatar: user.avatar };
+		const payload = { sub: user.id };
 
 		
 
