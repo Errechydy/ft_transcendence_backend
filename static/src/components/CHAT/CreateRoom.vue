@@ -137,26 +137,6 @@
               >
                 <span class="mr-2 uppercase">create</span>
               </button>
-              
-              <div
-                class="
-                  flex
-                  mt-2
-                  items-center
-                  justify-center
-                  focus:outline-none
-                  text-white text-sm
-                  sm:text-base
-                  rounded-2xl
-                  py-2
-                  w-full
-                  transition
-                  duration-150
-                  ease-in
-                "
-              >
-
-              </div>
 
             </div>
           </form>

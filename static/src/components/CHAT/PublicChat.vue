@@ -195,7 +195,7 @@ const globalComponent = defineComponent({
 
 
 
-            router.push({name: 'chatpublicmsg', query: { roomId: room_id }});
+            router.push({name: 'chatpublicmsg', query: { roomId: room_id}});
         },
         userIsTyping(e:any)
         {

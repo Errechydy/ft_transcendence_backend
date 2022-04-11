@@ -20,6 +20,12 @@ export class RoomService {
 		private roomsMessagesRepository: Repository<RoomMessage>,
 	) {}
 
+	arrayRemove(roomAdmins: number[], userId: number) { 
+        return roomAdmins.filter(function(ele){ 
+            return ele != userId; 
+        });
+    }
+
 
 	async create(sessionId: number, createRoomDto: CreateRoomDto) {
 		const newRoom = this.roomsRepository.create(createRoomDto);
@@ -36,9 +42,6 @@ export class RoomService {
 		{
 			newRoom.password = "";
 		}
-		
-
-
 		newRoom.owner_id = sessionId;
 		const data = await this.roomsRepository.save(newRoom);
 		if(data)
@@ -114,7 +117,6 @@ export class RoomService {
 			const hash = await bcrypt.hash(password, saltOrRounds);
 			room.password = hash;
 		}
-		room.admins = updateRoomDto.admins;
 		
 		return this.roomsRepository.save(room);
 	}
@@ -141,6 +143,34 @@ export class RoomService {
 			else
 				return false;
 		}
+	}
+
+	async addRoomAdmin(roomId: number, userId: number) {
+		const room = await this.findOne(roomId);
+
+		if(!room.admins.includes(userId))
+			room.admins.push(userId);
+		
+		const data = await this.roomsRepository.save(room);
+		
+		if( data )
+			return { status: true }
+		else
+			return { status: false }
+	}
+
+	async removeRoomAdmin(roomId: number, userId: number) {
+		const room = await this.findOne(roomId);
+
+		if(room.admins.includes(userId))
+			room.admins = this.arrayRemove(room.admins, userId);
+
+		const data = await this.roomsRepository.save(room);
+	
+		if( data )
+			return { status: true }
+		else
+			return { status: false }
 	}
 	
 }

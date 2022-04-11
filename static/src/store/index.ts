@@ -130,7 +130,7 @@ export default createStore({
     },
     addMessageToRoomMsgs(state: any, msg:message)
     {
-      msg.id = state.chatPublicMsgs[state.chatPublicMsgs.length - 1].id;
+      // msg.id = state.chatPublicMsgs[state.chatPublicMsgs.length - 1].id;
       state.chatPublicMsgs.push(msg);
     },
     updatePlayers(state:any, players:Array<Player>)

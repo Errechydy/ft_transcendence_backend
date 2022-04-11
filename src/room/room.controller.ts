@@ -34,10 +34,10 @@ export class RoomController {
 	}
 
 	// TODO: should be protected : only edit only from room owner
-	// @Get(':id')
-	// findOne(@Param('id', ParseIntPipe) id: string) {
-	// 	return this.roomService.findOne(+id);
-	// }
+	@Get(':id')
+	findOne(@Param('id', ParseIntPipe) id: string) {
+		return this.roomService.findOne(+id);
+	}
 
 	@UseInterceptors(ClassSerializerInterceptor)
 	@Patch(':id')
@@ -77,6 +77,33 @@ export class RoomController {
 			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
 
 		return this.roomService.saveMessageToRoom(sessionId, createRoomMessageDto);
+	}
+
+	@Post(':roomId/add-admin')
+	async addRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() userId: string) {
+		const sessionId: number = 1;
+
+		const roomData =  await this.roomService.findOne(+roomId);
+		if( sessionId == roomData.owner_id || roomData.admins.includes(sessionId) )
+		{
+			return this.roomService.addRoomAdmin(+roomId, +userId);
+		}
+		else
+			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
+
+	}
+	@Post(':roomId/remove-admin')
+	async removeRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() userId: string) {
+		const sessionId: number = 1;
+
+		const roomData =  await this.roomService.findOne(+roomId);
+		if( sessionId == roomData.owner_id || roomData.admins.includes(sessionId) )
+		{
+			return this.roomService.removeRoomAdmin(+roomId, +userId);
+		}
+		else
+			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
+
 	}
 
 }
