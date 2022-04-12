@@ -80,6 +80,7 @@ export class BlockService {
 				WHERE public."block".user_id = ${sessionId}
 		`);
 	}
+	
 
 	
 

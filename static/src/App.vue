@@ -33,8 +33,10 @@ export default defineComponent({
   data()
   {
 	  return {
+		  	// userId = 1
 			token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5NjE3MDQ1LCJleHAiOjE2NTIyMDkwNDV9.wI-kuAjS-PDo43WRL0MaZpNKVkBxW5QvYIXxMK0oz5Y',
-
+			// userId = 4
+			// token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjQ5NzY5MjU0LCJleHAiOjE2NTIzNjEyNTR9.ALBPdeuMvdS5suhHrDLLQj43Q_FoVqz7YbJQSkFHlkI'
 	  }
   },
   created(){
@@ -57,6 +59,7 @@ export default defineComponent({
 			localStorage.username = data.username;
 			localStorage.avatar = data.avatar;
 			localStorage.joinedRooms = data.joinedRooms;
+			localStorage.blockedList = data.blockedList;
 
 
 		}

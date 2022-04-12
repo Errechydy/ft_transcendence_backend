@@ -1,14 +1,12 @@
 
 
-2 - Edit user's profile ( Upload avatar )
-3 - Integrate 42 oauth
+1 - private messages
 
 npm remove @vue/cli-plugin-eslint
 --------------------------
 			IMPORTANT 
 --------------------------
 - Change all sessionId ( or user's session data )  to req.user.id
-- users.service.ts: leaveRoom() + joinRoom() ===> make new JwT that includes the new joinedRooms[] data
 
 --------------------------
 --------------------------

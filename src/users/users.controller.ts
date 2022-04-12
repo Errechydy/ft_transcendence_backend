@@ -8,12 +8,14 @@ import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from '../utils/file-upload.utils';
+import { BlockService } from 'src/block/block.service';
 
 @Controller('users')
 export class UsersController {
 	constructor(
 		private readonly usersService: UsersService,
-		private authService: AuthService
+		private readonly blockService: BlockService,
+		private authService: AuthService,
 	) {}
 
 	@Post('register')
@@ -62,9 +64,16 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get(':id/current')
-	getCurrentLoggedinUser(@Request() req) {
+	async getCurrentLoggedinUser(@Request() req) {
 
-		return this.usersService.findOne(+req.user.id);
+		const sessionId: number = 1; // TODO: get it from jwt
+
+		const blockedUsers = await this.blockService.blockedListUsers(sessionId);
+		const blockedList: number[] = blockedUsers.map(a => a.id); // Select only id from the user object
+		let userData = await this.usersService.findOne(+req.user.id);
+		userData['blockedList'] = blockedList;
+
+		return userData;
 	}
 
 

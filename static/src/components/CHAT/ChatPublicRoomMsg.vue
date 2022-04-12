@@ -16,19 +16,21 @@
 
 					<button @click="profileClicked" class="mb-2 bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Profile</button>
 
-					<div v-if="clickedUserId != ownerId || true" class="w-full">
+
+					<div v-if="clickedUserId != userId" class="w-full">
 						<div v-if="clickedUserId != userId || true" class="w-full">
-							<button @click="inviteClicked" class="w-full mb-2 bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Invite</button>
+							<button @click="inviteClicked" class="w-full mb-2 bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Invite </button>
 							<button v-if="(isAdmin && !roomInfo.admins.includes(clickedUserId)) || isOwner" @click="banClicked" class="w-full mb-2 bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Ban</button>
 							<input  v-if="(isAdmin && !roomInfo.admins.includes(clickedUserId)) || isOwner" v-focus class="w-full px-4 py-2 rounded-lg text-center mb-2 border-2 border-blue-500" :class="{'border-red-500' : invalidTime}" type="text" v-model="numOfSeconds" placeholder="seconds"/>
 							<button v-if="(isAdmin && !roomInfo.admins.includes(clickedUserId)) || isOwner" @click="muteClicked" class="w-full mb-2 bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Mute</button>
 						</div>
 
 						<div v-if="isOwner" class="w-full">
-							<button v-if=" roomInfo.admins.includes(clickedUserId) " @click="addAdmin" class="mb-2 w-full bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Set as admin</button>
+							<button v-if=" !roomInfo.admins.includes(clickedUserId) " @click="addAdmin" class="mb-2 w-full bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Set as admin</button>
 							<button v-else @click="removeAdmin" class="mb-2 w-full bg-indigo-500 px-4 py-2 rounded-md text-md text-white">Remove admin</button>
 						</div>
 					</div>
+		
 					
 				
 				</div>
@@ -131,6 +133,7 @@ const globalComponentRoomMessages =  defineComponent({
 		username: '' as string,
 		avatar: '' as string,
 		joinedRooms: [] as number[],
+		blockedList: [] as number[],
 		roomInfo: null as any,
 		invalidTime: false as boolean,
       }
@@ -152,6 +155,9 @@ const globalComponentRoomMessages =  defineComponent({
 		if (localStorage.joinedRooms) {
 			this.joinedRooms = localStorage.joinedRooms;
 		}
+		if (localStorage.blockedList) {
+			this.blockedList = localStorage.blockedList;
+		}
 	   this.getRoomsMessages();
 	   this.getRoomsInfo();
 	   joinTheRoom(localStorage.userId, this.roomId);
@@ -169,6 +175,7 @@ const globalComponentRoomMessages =  defineComponent({
 				}
 			);
             this.roomInfo = resp.data;
+
 			this.isAdmin = this.roomInfo.admins.includes(localStorage.userId);
 			this.isOwner = localStorage.userId == this.roomInfo.owner_id;
 			this.ownerId = this.roomInfo.owner_id;
@@ -200,7 +207,9 @@ const globalComponentRoomMessages =  defineComponent({
 
 	  newMessage(data: any)
       {
-		  const msgObj = {
+			if( !this.blockedList.includes(data.from) )
+		  	{
+			  	const msgObj = {
                   	id: 0,
 					room_id: 0,
 					from_id: data.from,
@@ -208,9 +217,10 @@ const globalComponentRoomMessages =  defineComponent({
 					avatar: data.avatar,
 					msg: data.message,
 					created: Date.now(),
-            };
-            this.curMsgData = '';
-            store.commit('addMessageToRoomMsgs', msgObj);
+				};
+				this.curMsgData = '';
+				store.commit('addMessageToRoomMsgs', msgObj);
+			}
 	  },
 	  timestampToDateTime(unix_timestamp: number)
 	  {
@@ -306,7 +316,6 @@ const globalComponentRoomMessages =  defineComponent({
 		const resp = await axios.post(
 			`http://localhost:3000/api/v1/room/${this.roomId}/add-admin`,
 			{
-				"roomId": this.roomId,
 				"userId": this.clickedUserId
 			},
 			{
@@ -318,13 +327,13 @@ const globalComponentRoomMessages =  defineComponent({
 		{
 			this.isPopUp = false;
 		}
+
 	},
 	async removeAdmin()
 	{
 		const resp = await axios.post(
 			`http://localhost:3000/api/v1/room/${this.roomId}/remove-admin`,
 			{
-				"roomId": this.roomId,
 				"userId": this.clickedUserId
 			},
 			{
@@ -336,6 +345,7 @@ const globalComponentRoomMessages =  defineComponent({
 		{
 			this.isPopUp = false;
 		}
+
 	}
    },
 

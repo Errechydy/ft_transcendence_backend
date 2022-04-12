@@ -80,29 +80,34 @@ export class RoomController {
 	}
 
 	@Post(':roomId/add-admin')
-	async addRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() userId: string) {
+	async addRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() data: string) {
 		const sessionId: number = 1;
 
 		const roomData =  await this.roomService.findOne(+roomId);
 		if( sessionId == roomData.owner_id || roomData.admins.includes(sessionId) )
 		{
-			return this.roomService.addRoomAdmin(+roomId, +userId);
+			return this.roomService.addRoomAdmin(+roomId, +data['userId']);
 		}
 		else
-			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
+			throw new HttpException({ message: 'Unauthorized operation' }, HttpStatus.UNAUTHORIZED);
+
 
 	}
 	@Post(':roomId/remove-admin')
-	async removeRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() userId: string) {
+	async removeRoomAdmin(@Param('roomId', ParseIntPipe) roomId: string, @Body() data: string) {
 		const sessionId: number = 1;
 
 		const roomData =  await this.roomService.findOne(+roomId);
 		if( sessionId == roomData.owner_id || roomData.admins.includes(sessionId) )
 		{
-			return this.roomService.removeRoomAdmin(+roomId, +userId);
+			const saved = await this.roomService.removeRoomAdmin(+roomId, +data['userId']);
+			if(saved)
+				return { status : true }
+			else
+				return { status : false }
 		}
 		else
-			throw new HttpException({ message: 'You can\'t participate in this room' }, HttpStatus.UNAUTHORIZED);
+			throw new HttpException({ message: 'Unauthorized operation' }, HttpStatus.UNAUTHORIZED);
 
 	}
 

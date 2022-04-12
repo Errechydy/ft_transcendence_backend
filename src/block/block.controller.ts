@@ -19,7 +19,7 @@ export class BlockController {
 		const sessionId: number = 1; // TODO: get it from jwt
 		return this.blockService.blockedListUsers(sessionId); // Return list of all blocked users
 	}
-
+	
 	@Delete()
 	unBlockUser(@Body() createBlockDto: CreateBlockDto) {
 		const sessionId: number = 1; // TODO: get it from jwt

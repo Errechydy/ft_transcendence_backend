@@ -21,8 +21,6 @@ export class BanController {
 		const sessionId: number = 1;
 
 		const roomData = await this.roomService.findOne(createBanDto.room_id);
-
-
 		return this.banService.create(sessionId, roomData, createBanDto);
 	}
 
