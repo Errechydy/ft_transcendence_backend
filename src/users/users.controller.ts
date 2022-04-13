@@ -1,14 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request, UseGuards, Inject, forwardRef, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request, UseGuards, Inject, forwardRef, UseInterceptors, UploadedFile, Query, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from '../utils/file-upload.utils';
 import { BlockService } from 'src/block/block.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+import jwt from '@nestjs/jwt'
 
 @Controller('users')
 export class UsersController {
@@ -16,18 +19,52 @@ export class UsersController {
 		private readonly usersService: UsersService,
 		private readonly blockService: BlockService,
 		private authService: AuthService,
+		private httpService: HttpService
 	) {}
 
-	@Post('register')
-	create(@Body() createUserDto: CreateUserDto) {
-		return this.usersService.create(createUserDto);
+	@Get('callback')
+	async create(@Query('code') code: string) {
+
+
+
+		// return query['code'];
+		const postData = {
+			"grant_type": "authorization_code",
+			"client_id": "5478b01b4ef88f8c5439b215a1b38c2dc5f12d99b949173c94232a616534abef",
+			"client_secret": "380d7a1e59e13c9a06da4e5ad884b1cde60d445ee69efdeaa3867e064ef3da86",
+			"code": code,
+			"redirect_uri": "http://localhost:3000/api/v1/users/register",
+		}
+
+		const newData =  await firstValueFrom(this.httpService.post(
+			'https://api.intra.42.fr/oauth/token',
+			postData
+		)); // returns AxiosResponse
+
+
+
+
+		const userData =  await firstValueFrom(this.httpService.get(
+			'https://api.intra.42.fr/v2/me',
+			{
+				headers: { 'Authorization':  `Bearer ${newData.data['access_token']}` },
+			}
+		)); 
+
+		// console.log(userData);
+
+		// check db if the user exists if not save it
+
+		const { access_token } = await this.authService.login(userData.data);
+
+		return {
+			user: userData.data,
+			access_token
+		};
+
+		// return this.usersService.create(createUserDto);
 	}
 
-	@UseGuards(LocalAuthGuard)
-	@Post('login')
-	async login( @Request() req ) {
-		return this.authService.login(req.user);
-	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
