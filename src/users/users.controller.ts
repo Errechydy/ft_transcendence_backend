@@ -30,8 +30,8 @@ export class UsersController {
 		// return query['code'];
 		const postData = {
 			"grant_type": "authorization_code",
-			"client_id": "5478b01b4ef88f8c5439b215a1b38c2dc5f12d99b949173c94232a616534abef",
-			"client_secret": "380d7a1e59e13c9a06da4e5ad884b1cde60d445ee69efdeaa3867e064ef3da86",
+			"client_id": process.env['CLIENT_ID'],
+			"client_secret": process.env['CLIENT_SECRET'],
 			"code": code,
 			"redirect_uri": "http://localhost:3000/api/v1/users/register",
 		}
