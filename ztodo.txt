@@ -1,5 +1,5 @@
 
-0 - leave room
+0 - leave room : goBackToRoomsList():ChatPublicRoomMsg.vue
 1 - private messages
 
 npm remove @vue/cli-plugin-eslint

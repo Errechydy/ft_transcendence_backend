@@ -237,6 +237,11 @@ const globalComponentRoomMessages =  defineComponent({
 	  leaveRoom()
 	  {
 		  console.log(`leave room ${this.roomId}`);
+		  leaveTheRoom(this.userId, this.roomId);
+	  },
+	  goBackToRoomsList() // TODO:
+	  {
+		  console.log(`leave room ${this.roomId}`);
 	  },
 	  userIconClicked(msg:message)
 	  {
@@ -427,41 +432,31 @@ const joinTheRoom = (userId: number, roomId: number) => {
 
 
 
-// Leave room
-// const leaveTheRoom = () => {
-// 	socket.emit(
-// 		'leave-room',
-// 		{ 
-// 			data: {
-// 				from: myJwtId,
-// 				roomName: roomName
-// 			}
-// 		},
-// 		(response: any) => {
-// 			// join-room callback
-// 			if(response.status)
-// 			{
-// 				console.log("You left this room"); // ok
-// 			}
-// 			else
-// 			{
-// 				console.log("Error leaving the room"); // ok
-// 			}
-// 		}
-// 	)
-// }
+const leaveTheRoom = (userId: number, roomId: number) => {
+	socket.emit(
+		'leave-room',
+		{ 
+			data: {
+				from: userId,
+				roomName: roomId
+			}
+		},
+		(response: any) => {
+			// join-room callback
+			if(response.status)
+			{
+				globalComponent.methods!.goBackToRoomsList();
+			}
+			else
+			{
+				console.log("Error joining the room"); // ok
+			}
+		}
+	)
+}
 
 
 
-// const handleNewMessage = (message) => {
-// 	messages.appendChild(buildNewMessage(message));
-// }
-
-// const buildNewMessage = (message) => {
-// 	const li = document.createElement("li");
-// 	li.appendChild(document.createTextNode(message))
-// 	return li;
-// }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::://
 //:::::::::::::::::::::::::::::::::::::::::::::::::::://

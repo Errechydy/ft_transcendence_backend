@@ -57,11 +57,6 @@ export class ChatRoomGateway {
 	}
 
 
-	@SubscribeMessage('join-room-m')
-	async joinRoomM(client, payload: any) {
-		client.join(payload.data.roomName);		
-	}
-
 	@SubscribeMessage('leave-room')
 	async leaveRoom(client, payload: any) {
 		const sessionId : number = +payload.data.from;
@@ -77,6 +72,14 @@ export class ChatRoomGateway {
 		}
 		
 	}
+
+
+	@SubscribeMessage('join-room-m')
+	async joinRoomM(client, payload: any) {
+		client.join(payload.data.roomName);		
+	}
+
+	
 	
 
 }
