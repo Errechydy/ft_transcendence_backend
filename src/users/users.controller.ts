@@ -24,11 +24,11 @@ export class UsersController {
 
 
 
-	@Get('token')
-	token() {
-		const user = this.usersService.findOne(1);
-		return this.authService.login(user);
-	}
+	// @Get('token')
+	// token() {
+	// 	const user = this.usersService.findOne(1);
+	// 	return this.authService.login(user);
+	// }
 
 
 	@Post('register')
@@ -50,7 +50,7 @@ export class UsersController {
 			"client_id": process.env['CLIENT_ID'],
 			"client_secret": process.env['CLIENT_SECRET'],
 			"code": code,
-			"redirect_uri": "http://localhost:3000/api/v1/users/register",
+			"redirect_uri": "http://localhost:3000/login.html",
 		}
 
 		const newData =  await firstValueFrom(this.httpService.post(
@@ -68,18 +68,33 @@ export class UsersController {
 			}
 		)); 
 
-		// console.log(userData);
+		// const user = get where id42 = userData['id'] // TODO
+		let user = await this.usersService.findOne(1);
+		if(user)
+		{
+			const { access_token } = await this.authService.login(user);
+			return {
+				registred: true,
+				user: user,
+				token: access_token
+			};
 
-		// check db if the user exists if not save it
 
-		const { access_token } = await this.authService.login(userData.data);
+		}
+		else
+		{
+			const createUserDto = new CreateUserDto();
+			createUserDto.username = userData.data['login'];
+			user = await this.usersService.create(createUserDto);
+			const { access_token } = await this.authService.login(user);
+			return {
+				registred: false,
+				user: userData.data,
+				token: access_token
+			};
+		}
 
-		return {
-			user: userData.data,
-			access_token
-		};
-
-		// return this.usersService.create(createUserDto);
+		
 	}
 
 

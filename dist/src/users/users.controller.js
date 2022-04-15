@@ -32,10 +32,6 @@ let UsersController = class UsersController {
         this.authService = authService;
         this.httpService = httpService;
     }
-    token() {
-        const user = this.usersService.findOne(1);
-        return this.authService.login(user);
-    }
     createNewUser(createUserDto) {
         return this.usersService.create(createUserDto);
     }
@@ -45,17 +41,32 @@ let UsersController = class UsersController {
             "client_id": process.env['CLIENT_ID'],
             "client_secret": process.env['CLIENT_SECRET'],
             "code": code,
-            "redirect_uri": "http://localhost:3000/api/v1/users/register",
+            "redirect_uri": "http://localhost:3000/login.html",
         };
         const newData = await (0, rxjs_1.firstValueFrom)(this.httpService.post('https://api.intra.42.fr/oauth/token', postData));
         const userData = await (0, rxjs_1.firstValueFrom)(this.httpService.get('https://api.intra.42.fr/v2/me', {
             headers: { 'Authorization': `Bearer ${newData.data['access_token']}` },
         }));
-        const { access_token } = await this.authService.login(userData.data);
-        return {
-            user: userData.data,
-            access_token
-        };
+        let user = await this.usersService.findOne(1);
+        if (user) {
+            const { access_token } = await this.authService.login(user);
+            return {
+                registred: true,
+                user: user,
+                token: access_token
+            };
+        }
+        else {
+            const createUserDto = new create_user_dto_1.CreateUserDto();
+            createUserDto.username = userData.data['login'];
+            user = await this.usersService.create(createUserDto);
+            const { access_token } = await this.authService.login(user);
+            return {
+                registred: false,
+                user: userData.data,
+                token: access_token
+            };
+        }
     }
     findAll() {
         return this.usersService.findAll();
@@ -78,12 +89,6 @@ let UsersController = class UsersController {
         return userData;
     }
 };
-__decorate([
-    (0, common_1.Get)('token'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "token", null);
 __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),

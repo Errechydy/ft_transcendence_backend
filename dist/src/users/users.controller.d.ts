@@ -11,13 +11,11 @@ export declare class UsersController {
     private authService;
     private httpService;
     constructor(usersService: UsersService, blockService: BlockService, authService: AuthService, httpService: HttpService);
-    token(): Promise<{
-        access_token: string;
-    }>;
     createNewUser(createUserDto: CreateUserDto): Promise<import("./entities/user.entity").User>;
     create(code: string): Promise<{
+        registred: boolean;
         user: any;
-        access_token: string;
+        token: string;
     }>;
     findAll(): Promise<import("./entities/user.entity").User[]>;
     findOne(id: string): Promise<import("./entities/user.entity").User>;
