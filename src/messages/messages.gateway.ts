@@ -35,7 +35,7 @@ export class MessageGateway {
 		}
 	}
 
-	@SubscribeMessage('join-room')
+	@SubscribeMessage('join-user')
 	async joinRoom(client, payload: any) {
 		client.join(payload.data.roomName);
 	}

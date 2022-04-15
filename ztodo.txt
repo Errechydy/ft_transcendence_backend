@@ -7,7 +7,9 @@ npm remove @vue/cli-plugin-eslint
 			IMPORTANT 
 --------------------------
 - Change all sessionId ( or user's session data )  to req.user.id
-
+- add default-avatar.png to /upload....
+- remove "| true" from chat room 
+ 
 --------------------------.env
 POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5432

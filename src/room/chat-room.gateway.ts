@@ -59,7 +59,12 @@ export class ChatRoomGateway {
 
 	@SubscribeMessage('leave-room')
 	async leaveRoom(client, payload: any) {
+
+
+
+		
 		const sessionId : number = +payload.data.from;
+
 		const leaveingStatus = this.usersService.leaveRoom(sessionId, +payload.data.roomName);
 		if ( leaveingStatus )
 		{

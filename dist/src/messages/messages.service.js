@@ -27,24 +27,17 @@ let MessagesService = class MessagesService {
         return this.messageRepository.save(newMessage);
     }
     async findOne(sessionId, userId) {
-        return this.messageRepository.createQueryBuilder('message')
-            .where(new typeorm_2.Brackets(qb => {
-            qb.where('from_id = :id', {
-                id: userId,
-            });
-            qb.andWhere('to_id = :id2', {
-                id2: sessionId,
-            });
-        }))
-            .orWhere(new typeorm_2.Brackets(qb => {
-            qb.where('to_id = :id3', {
-                id3: userId,
-            });
-            qb.andWhere('from_id = :id4', {
-                id4: sessionId,
-            });
-        }))
-            .getMany();
+        return (0, typeorm_2.getConnection)().query(`
+			SELECT public."message".*, public."user".username, public."user".id, public."user".avatar  FROM
+				public."message"
+				INNER JOIN
+					public."user"
+						ON public."message".from_id = public."user".id
+				WHERE public."message".from_id = ${userId} AND public."message".to_id = ${sessionId}
+				OR public."message".from_id = ${sessionId} AND public."message".to_id = ${userId}
+				ORDER BY
+					created ASC
+				`);
     }
     async getChatList(sessionId) {
         return (0, typeorm_2.getConnection)().query(`
@@ -54,7 +47,7 @@ let MessagesService = class MessagesService {
 							public."user"
 						ON
 							( public."message".from_id = public."user".id AND public."message".from_id != ${sessionId} )
-							OR 
+						OR 
 							( public."message".to_id = public."user".id AND public."message".to_id != ${sessionId} )
 					INNER JOIN 
 							(

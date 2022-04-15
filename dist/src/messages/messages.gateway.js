@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MessageGateway.prototype, "handleMessage", null);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('join-room'),
+    (0, websockets_1.SubscribeMessage)('join-user'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)

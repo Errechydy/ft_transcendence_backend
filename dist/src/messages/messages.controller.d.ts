@@ -7,6 +7,6 @@ export declare class MessagesController {
     constructor(messagesService: MessagesService, blockService: BlockService);
     create(createMessageDto: CreateMessageDto): Promise<import("./entities/message.entity").Message>;
     findAll(): Promise<any>;
-    findOne(id: string): Promise<import("./entities/message.entity").Message[]>;
+    findOne(id: string): Promise<any>;
     remove(id: string): Promise<import("typeorm").DeleteResult>;
 }

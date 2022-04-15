@@ -12,6 +12,7 @@ const PrivateChat_vue_1 = require("@/components/CHAT/PrivateChat.vue");
 const CreateRoom_vue_1 = require("@/components/CHAT/CreateRoom.vue");
 const ErrorPage_vue_1 = require("@/components/ErrorPage.vue");
 const ChatPublicRoomMsg_vue_1 = require("@/components/CHAT/ChatPublicRoomMsg.vue");
+const privateMsgs_vue_1 = require("@/components/CHAT/privateMsgs.vue");
 const PlayerFromGlob_vue_1 = require("@/components/PlayerFromGlob.vue");
 const routes = [
     {
@@ -53,6 +54,11 @@ const routes = [
                 path: 'private',
                 name: 'chatprivate',
                 component: PrivateChat_vue_1.default,
+            },
+            {
+                path: 'privatemsgs',
+                name: 'privatemsgs',
+                component: privateMsgs_vue_1.default
             },
             {
                 path: 'public',

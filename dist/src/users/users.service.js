@@ -70,6 +70,7 @@ let UsersService = class UsersService {
         const userData = await this.findOne(id);
         if (userData && userData.joinedRooms.includes(roomId)) {
             userData.joinedRooms = this.arrayRemove(userData.joinedRooms, roomId);
+            this.usersRepository.save(userData);
             return true;
         }
         return false;

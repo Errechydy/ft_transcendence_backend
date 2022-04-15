@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
+const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const auth_service_1 = require("../auth/auth.service");
 const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
@@ -31,11 +32,18 @@ let UsersController = class UsersController {
         this.authService = authService;
         this.httpService = httpService;
     }
+    token() {
+        const user = this.usersService.findOne(1);
+        return this.authService.login(user);
+    }
+    createNewUser(createUserDto) {
+        return this.usersService.create(createUserDto);
+    }
     async create(code) {
         const postData = {
             "grant_type": "authorization_code",
-            "client_id": "5478b01b4ef88f8c5439b215a1b38c2dc5f12d99b949173c94232a616534abef",
-            "client_secret": "380d7a1e59e13c9a06da4e5ad884b1cde60d445ee69efdeaa3867e064ef3da86",
+            "client_id": process.env['CLIENT_ID'],
+            "client_secret": process.env['CLIENT_SECRET'],
             "code": code,
             "redirect_uri": "http://localhost:3000/api/v1/users/register",
         };
@@ -65,11 +73,24 @@ let UsersController = class UsersController {
         const sessionId = 1;
         const blockedUsers = await this.blockService.blockedListUsers(sessionId);
         const blockedList = blockedUsers.map(a => a.id);
-        let userData = await this.usersService.findOne(+req.user.id);
+        let userData = await this.usersService.findOne(sessionId);
         userData['blockedList'] = blockedList;
         return userData;
     }
 };
+__decorate([
+    (0, common_1.Get)('token'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "token", null);
+__decorate([
+    (0, common_1.Post)('register'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "createNewUser", null);
 __decorate([
     (0, common_1.Get)('callback'),
     __param(0, (0, common_1.Query)('code')),

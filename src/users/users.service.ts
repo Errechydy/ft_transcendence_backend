@@ -79,7 +79,7 @@ export class UsersService {
 		if( userData && userData.joinedRooms.includes(roomId) )
 		{
 			userData.joinedRooms = this.arrayRemove(userData.joinedRooms, roomId);
-			// TODO: make new JWT that has joinedRooms = userData.joinedRooms 
+			this.usersRepository.save(userData);
 			return true;
 		}
 		

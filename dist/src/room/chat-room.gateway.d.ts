@@ -12,8 +12,8 @@ export declare class ChatRoomGateway {
     joinRoom(client: any, payload: any): Promise<{
         status: boolean;
     }>;
-    joinRoomM(client: any, payload: any): Promise<void>;
     leaveRoom(client: any, payload: any): Promise<{
         status: boolean;
     }>;
+    joinRoomM(client: any, payload: any): Promise<void>;
 }

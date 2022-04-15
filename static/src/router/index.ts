@@ -11,6 +11,7 @@ import PrivateChatBlock from '@/components/CHAT/PrivateChat.vue'
 import CreateRoomBlock from '@/components/CHAT/CreateRoom.vue'
 import ErrorPageBlock from '@/components/ErrorPage.vue';
 import ChatPublicMsgBlock from '@/components/CHAT/ChatPublicRoomMsg.vue'
+import PrivateMsgsBlock from '@/components/CHAT/privateMsgs.vue'
 import TEMP from '@/components/PlayerFromGlob.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -53,6 +54,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'private',
         name: 'chatprivate',
         component: PrivateChatBlock,
+      },
+      {
+        path: 'privatemsgs',
+        name: 'privatemsgs',
+        component : PrivateMsgsBlock
       },
       {
         path: 'public',

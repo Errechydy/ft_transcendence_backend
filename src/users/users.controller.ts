@@ -22,6 +22,23 @@ export class UsersController {
 		private httpService: HttpService
 	) {}
 
+
+
+	@Get('token')
+	token() {
+		const user = this.usersService.findOne(1);
+		return this.authService.login(user);
+	}
+
+
+	@Post('register')
+	createNewUser(@Body() createUserDto: CreateUserDto) {
+		return this.usersService.create(createUserDto);
+	}
+
+
+
+
 	@Get('callback')
 	async create(@Query('code') code: string) {
 
@@ -107,7 +124,7 @@ export class UsersController {
 
 		const blockedUsers = await this.blockService.blockedListUsers(sessionId);
 		const blockedList: number[] = blockedUsers.map(a => a.id); // Select only id from the user object
-		let userData = await this.usersService.findOne(+req.user.id);
+		let userData = await this.usersService.findOne(sessionId);
 		userData['blockedList'] = blockedList;
 
 		return userData;

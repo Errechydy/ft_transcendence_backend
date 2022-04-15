@@ -34,7 +34,7 @@ export default defineComponent({
   {
 	  return {
 		  	// userId = 1
-			token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5NjE3MDQ1LCJleHAiOjE2NTIyMDkwNDV9.wI-kuAjS-PDo43WRL0MaZpNKVkBxW5QvYIXxMK0oz5Y',
+			token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTAwMzU0MjUsImV4cCI6MTY1MjYyNzQyNX0.erTb_ngQiIopzOYWovOWCvz3G2LO0v_f1kI2K_dZOUk',
 			// userId = 4
 			// token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjQ5NzY5MjU0LCJleHAiOjE2NTIzNjEyNTR9.ALBPdeuMvdS5suhHrDLLQj43Q_FoVqz7YbJQSkFHlkI'
 	  }

@@ -18,9 +18,13 @@ exports.default = (0, vuex_1.createStore)({
         rooms: [],
         players: [],
         PlayerHistory: [],
+        privateUsersList: [],
         currentRoomId: 0,
     },
     getters: {
+        getPrivateList(state) {
+            return state.privateUsersList;
+        },
         getCurrentRoomId(state) {
             return state.currentRoomId;
         },
@@ -67,6 +71,9 @@ exports.default = (0, vuex_1.createStore)({
         updateRooms(state, rooms) {
             state.rooms = [];
             state.rooms = rooms;
+        },
+        updatePrivateList(state, usersList) {
+            state.privateUsersList = usersList;
         },
         addRoom(state, room) {
             state.rooms.push(room);

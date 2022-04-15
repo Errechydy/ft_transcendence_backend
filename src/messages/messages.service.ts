@@ -27,26 +27,52 @@ export class MessagesService {
 
 	async findOne(sessionId: number, userId: number) {
 
+		return getConnection().query(`
+			SELECT public."message".*, public."user".username, public."user".id, public."user".avatar  FROM
+				public."message"
+				INNER JOIN
+					public."user"
+						ON public."message".from_id = public."user".id
+				WHERE public."message".from_id = ${userId} AND public."message".to_id = ${sessionId}
+				OR public."message".from_id = ${sessionId} AND public."message".to_id = ${userId}
+				ORDER BY
+					created ASC
+				`);
+
+				/*
+				
+				
+				
+				*/
+
+			// 	INNER JOIN
+			// 	public."user"
+			// ON
+			// 	( public."message".from_id = public."user".id AND public."message".from_id != ${sessionId} )
+			// 	OR 
+			// 	( public."message".to_id = public."user".id AND public."message".to_id != ${sessionId} )
 
 
-		return this.messageRepository.createQueryBuilder('message')
-			.where(new Brackets(qb => {
-				qb.where('from_id = :id', {
-					id: userId,
-				});
-				qb.andWhere('to_id = :id2', {
-					id2: sessionId,
-				});                               
-			}))
-			.orWhere(new Brackets(qb => {
-				qb.where('to_id = :id3', {
-					id3: userId,
-				});
-				qb.andWhere('from_id = :id4', {
-					id4: sessionId,
-				});                               
-			}))
-			.getMany();
+
+
+		// return this.messageRepository.createQueryBuilder('message')
+		// 	.where(new Brackets(qb => {
+		// 		qb.where('from_id = :id', {
+		// 			id: userId,
+		// 		});
+		// 		qb.andWhere('to_id = :id2', {
+		// 			id2: sessionId,
+		// 		});                               
+		// 	}))
+		// 	.orWhere(new Brackets(qb => {
+		// 		qb.where('to_id = :id3', {
+		// 			id3: userId,
+		// 		});
+		// 		qb.andWhere('from_id = :id4', {
+		// 			id4: sessionId,
+		// 		});                               
+		// 	}))
+		// 	.getMany();
 	}
 
 	async getChatList(sessionId: number) {
@@ -58,7 +84,7 @@ export class MessagesService {
 							public."user"
 						ON
 							( public."message".from_id = public."user".id AND public."message".from_id != ${sessionId} )
-							OR 
+						OR 
 							( public."message".to_id = public."user".id AND public."message".to_id != ${sessionId} )
 					INNER JOIN 
 							(

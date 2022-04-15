@@ -48,9 +48,6 @@ let ChatRoomGateway = class ChatRoomGateway {
             return { status: false };
         }
     }
-    async joinRoomM(client, payload) {
-        client.join(payload.data.roomName);
-    }
     async leaveRoom(client, payload) {
         const sessionId = +payload.data.from;
         const leaveingStatus = this.usersService.leaveRoom(sessionId, +payload.data.roomName);
@@ -61,6 +58,9 @@ let ChatRoomGateway = class ChatRoomGateway {
         else {
             return { status: false };
         }
+    }
+    async joinRoomM(client, payload) {
+        client.join(payload.data.roomName);
     }
 };
 __decorate([
@@ -76,17 +76,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChatRoomGateway.prototype, "joinRoom", null);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('join-room-m'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], ChatRoomGateway.prototype, "joinRoomM", null);
-__decorate([
     (0, websockets_1.SubscribeMessage)('leave-room'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ChatRoomGateway.prototype, "leaveRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('join-room-m'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatRoomGateway.prototype, "joinRoomM", null);
 ChatRoomGateway = __decorate([
     (0, websockets_1.WebSocketGateway)(8000, { cors: true }),
     __metadata("design:paramtypes", [ban_service_1.BanService,

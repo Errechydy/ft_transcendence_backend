@@ -55,9 +55,14 @@ export default createStore({
     rooms: [] as Array<Room>,
     players: [] as Array<Player>,
     PlayerHistory: [] as Array<PlayerHistory>,
-	currentRoomId: 0 as number,
+    privateUsersList: [] as Array<any>,
+	  currentRoomId: 0 as number,
   },
   getters: {
+    getPrivateList(state:any)
+    {
+      return state.privateUsersList;
+    },
 	getCurrentRoomId(state:any) {
 		return state.currentRoomId;
 	},
@@ -110,6 +115,10 @@ export default createStore({
     {
       state.rooms = [];
       state.rooms = rooms;
+    },
+    updatePrivateList(state:any, usersList:Array<any>)
+    {
+      state.privateUsersList = usersList;
     },
     addRoom(state:any, room:Room)
     {
